@@ -167,7 +167,7 @@ export const useAuthStore = defineStore("auth", () => {
           graphData.displayName ||
           `${graphData.givenName} ${graphData.surname}`,
         email: graphData.mail || graphData.userPrincipalName,
-        role: "RiskOwner", // Default role - should be fetched from backend
+        role: "RiskManagement", // Default role - should be fetched from backend
         department: graphData.department || "Unknown",
         permissions: [], // Should be fetched from backend
         active: true,

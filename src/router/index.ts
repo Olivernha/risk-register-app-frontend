@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'Dashboard',
-        component: () => import('@/views/dashboard/MyTasksDashboard.vue'),
+        component: () => import('@/views/dashboard/mytask.vue'),
       },
       {
         path: 'heatmap',

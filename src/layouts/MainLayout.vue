@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-100 dark:bg-slate-900 transition-colors duration-200">
+  <div class="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200">
     <!-- Top Navigation Bar -->
     <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

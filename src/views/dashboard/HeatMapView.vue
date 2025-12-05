@@ -3,11 +3,11 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900 mb-2">5×5 Risk Heat Map</h1>
-        <p class="text-slate-600">Interactive visualization of risk distribution by likelihood and impact</p>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Risk Heatmap</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400">5×5 risk matrix visualization</p>
       </div>
       <div class="flex items-center gap-3">
-        <select class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+        <select class="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
           <option>Current Risks</option>
           <option>Residual Risks</option>
         </select>
@@ -15,79 +15,159 @@
     </div>
 
     <!-- Heat Map Card -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-8 hover:shadow-xl transition-shadow duration-300">
-      <div class="text-center">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-6 shadow-lg shadow-indigo-500/30">
-          <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
-          </svg>
-        </div>
-        <h2 class="text-2xl font-bold text-slate-900 mb-2">Interactive Heat Map Visualization</h2>
-        <p class="text-slate-600 mb-8">The 5×5 risk heat map will display here with automated likelihood × impact calculations</p>
-        
-        <!-- Placeholder Grid Preview -->
-        <div class="inline-block p-8 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border-2 border-dashed border-slate-300">
-          <div class="grid grid-cols-5 gap-3">
-            <div v-for="i in 25" :key="i" 
-              class="w-20 h-20 bg-white rounded-lg border-2 border-slate-200 flex items-center justify-center text-slate-400 text-xs font-medium hover:bg-slate-50 hover:border-indigo-300 transition-all duration-200 cursor-pointer hover:scale-105"
-            >
-              Cell {{ i }}
-            </div>
+    <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Risk Heatmap</h2>
+      </div>
+
+      <!-- Heatmap Grid -->
+      <div class="flex gap-4">
+        <!-- Y-axis label -->
+        <div class="flex flex-col justify-between py-8">
+          <div class="text-xs font-medium text-gray-600 dark:text-gray-400 -rotate-90 whitespace-nowrap origin-center">
+            Likelihood
           </div>
         </div>
 
-        <!-- Legend -->
-        <div class="mt-10 flex items-center justify-center gap-8 text-sm">
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-lg bg-emerald-400 shadow-sm"></div>
-            <span class="text-slate-700 font-medium">Low</span>
+        <!-- Grid Container -->
+        <div class="flex-1">
+          <!-- Grid -->
+          <div class="grid grid-cols-5 gap-2 mb-4">
+            <!-- Row 5 - Catastrophic -->
+            <div class="col-span-5 grid grid-cols-5 gap-2">
+              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R1
+              </div>
+              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R10
+              </div>
+              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R10
+              </div>
+              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R10
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+            </div>
+
+            <!-- Row 4 - Major -->
+            <div class="col-span-5 grid grid-cols-5 gap-2">
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-red-400 dark:bg-red-500 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R2
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+            </div>
+
+            <!-- Row 3 - Moderate -->
+            <div class="col-span-5 grid grid-cols-5 gap-2">
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-yellow-400 dark:bg-yellow-500 rounded flex items-center justify-center text-gray-900 dark:text-gray-100 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R3
+              </div>
+              <div class="aspect-square bg-yellow-400 dark:bg-yellow-500 rounded flex items-center justify-center text-gray-900 dark:text-gray-100 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R3
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+            </div>
+
+            <!-- Row 2 - Minor -->
+            <div class="col-span-5 grid grid-cols-5 gap-2">
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R1
+              </div>
+              <div class="aspect-square bg-gray-400 dark:bg-gray-500 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                H3
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                H
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+            </div>
+
+            <!-- Row 1 - Negligible -->
+            <div class="col-span-5 grid grid-cols-5 gap-2">
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R1
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R1
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                R1
+              </div>
+              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+                
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-lg bg-yellow-400 shadow-sm"></div>
-            <span class="text-slate-700 font-medium">Medium</span>
+
+          <!-- X-axis labels -->
+          <div class="grid grid-cols-5 gap-2 text-center">
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Negligible</div>
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Minor</div>
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Moderate</div>
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Major</div>
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Catastrophic</div>
           </div>
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-lg bg-orange-400 shadow-sm"></div>
-            <span class="text-slate-700 font-medium">High</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-lg bg-rose-400 shadow-sm"></div>
-            <span class="text-slate-700 font-medium">Very High</span>
+
+          <!-- X-axis title -->
+          <div class="text-center mt-2">
+            <div class="text-xs font-medium text-gray-600 dark:text-gray-400">Impact</div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Info Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-6">
-        <div class="flex gap-4">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+      <!-- Legend -->
+      <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Legend</h3>
+        <div class="flex flex-wrap gap-4 text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-red-500"></div>
+            <span class="text-gray-600 dark:text-gray-400">Very High</span>
           </div>
-          <div>
-            <h3 class="font-semibold text-blue-900 mb-2">How It Works</h3>
-            <p class="text-sm text-blue-700 leading-relaxed">The heat map visualizes risks based on their likelihood (probability of occurrence) and impact (severity of consequences). Each cell represents a specific risk level combination.</p>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-red-400"></div>
+            <span class="text-gray-600 dark:text-gray-400">High</span>
           </div>
-        </div>
-      </div>
-
-      <div class="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-6">
-        <div class="flex gap-4">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-yellow-400"></div>
+            <span class="text-gray-600 dark:text-gray-400">Medium</span>
           </div>
-          <div>
-            <h3 class="font-semibold text-purple-900 mb-2">Interactive Features</h3>
-            <p class="text-sm text-purple-700 leading-relaxed">Click on any cell to filter and view specific risks. Hover over cells to see risk counts and details. Toggle between current and residual risk views.</p>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-gray-400"></div>
+            <span class="text-gray-600 dark:text-gray-400">Low</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded bg-gray-300 border border-gray-400"></div>
+            <span class="text-gray-600 dark:text-gray-400">No data/Unassigned</span>
           </div>
         </div>
       </div>
@@ -96,5 +176,5 @@
 </template>
 
 <script setup lang="ts">
-// Heat map component will be implemented in Task 22.1
+// Heat map component matching wireframe design
 </script>
