@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Risk, RiskStatus } from '@/types'
+import type { Risk } from '@/types'
 import riskService from '@/api/risks'
 
 export const useRiskStore = defineStore('risk', () => {
@@ -52,6 +52,154 @@ export const useRiskStore = defineStore('risk', () => {
     }
   }
 
+  async function publishRisk(id: string) {
+    loading.value = true
+    error.value = null
+    try {
+      // 1. Fetch latest state of risk to validate
+      const risk = risks.value.find(r => r.id === id) || await riskService.getRisk(id)
+      
+      if (!risk) throw new Error('Risk not found')
+      
+      // 2. Preconditions Check
+      if (risk.status !== 'Draft') {
+        throw new Error('Only Draft risks can be published')
+      }
+      if (!risk.owners || risk.owners.length === 0) {
+        throw new Error('Risk must have at least one owner assigned')
+      }
+      
+      // 3. Update Status
+      const updatedRisk = await riskService.updateRisk(id, { 
+          status: 'Published',
+          audit: {
+            ...risk.audit,
+            updatedBy: 'Current User', // TODO: Get from auth store if possible, but store access inside store might be tricky without passing custom arg or using root store
+            updatedAt: new Date()
+          }
+      })
+      
+      // 4. Update Local State
+      const index = risks.value.findIndex(r => r.id === id)
+      if (index !== -1) {
+        risks.value[index] = updatedRisk
+      }
+      currentRisk.value = updatedRisk
+
+      // 5. Mock Notifications
+      console.log(`[Notification System] Email sent to owners: ${risk.owners.map(o => o.email).join(', ')}`)
+      
+      return updatedRisk
+    } catch (e: any) {
+      error.value = e.message || `Failed to publish risk ${id}`
+      console.error(e)
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function lockRisk(id: string, forceOverride: boolean = false) {
+    loading.value = true
+    error.value = null
+    try {
+      const risk = risks.value.find((r: Risk) => r.id === id) || await riskService.getRisk(id)
+      
+      if (!risk) throw new Error('Risk not found')
+      
+      // Validation: Must be Published
+      if (risk.status !== 'Published') {
+        throw new Error('Only Published risks can be locked')
+      }
+
+      // Check rating completeness
+      const pendingOwners = risk.owners.filter((owner: any) => {
+        const ownerRating = risk.ratings.find((r: any) => r.ownerId === owner.userId)
+        return !ownerRating || !ownerRating.submittedAt
+      })
+
+      if (pendingOwners.length > 0 && !forceOverride) {
+        const ownerNames = pendingOwners.map((o: any) => o.name).join(', ')
+        throw new Error(`INCOMPLETE_RATINGS:${ownerNames}`)
+      }
+
+      // Lock the risk
+      const updatedRisk = await riskService.updateRisk(id, {
+        status: 'Locked',
+        audit: {
+          ...risk.audit,
+          updatedBy: 'Current User',
+          updatedAt: new Date(),
+          lockedBy: 'Current User',
+          lockedAt: new Date()
+        }
+      })
+
+      // Update local state
+      const index = risks.value.findIndex((r: Risk) => r.id === id)
+      if (index !== -1) {
+        risks.value[index] = updatedRisk
+      }
+      currentRisk.value = updatedRisk
+
+      return updatedRisk
+    } catch (e: any) {
+      error.value = e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function deleteRisk(id: string, reason: string) {
+    loading.value = true
+    error.value = null
+    try {
+      const risk = risks.value.find((r: Risk) => r.id === id) || await riskService.getRisk(id)
+      
+      if (!risk) throw new Error('Risk not found')
+      
+      // Validation
+      if (risk.status !== 'Draft') {
+        throw new Error('Only Draft risks can be deleted')
+      }
+      if (risk.ratings && risk.ratings.length > 0) {
+        throw new Error('Cannot delete risk that has ratings')
+      }
+      if (risk.mitigations && risk.mitigations.length > 0) {
+        throw new Error('Cannot delete risk that has mitigations')
+      }
+
+      // Soft Delete
+      const updatedRisk = await riskService.updateRisk(id, {
+        status: 'Deleted',
+        audit: {
+          ...risk.audit,
+          updatedBy: 'Current User',
+          updatedAt: new Date(),
+          deletedBy: 'Current User',
+          deletedAt: new Date(),
+          deleteReason: reason
+        }
+      })
+
+      // Update local state (remove from list or mark as deleted)
+      // Since we want to hide it, removing from local list is appropriate for now
+      const index = risks.value.findIndex((r: Risk) => r.id === id)
+      if (index !== -1) {
+        risks.value.splice(index, 1)
+      }
+      currentRisk.value = null
+
+      return updatedRisk
+    } catch (e: any) {
+      error.value = e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     risks,
     currentRisk,
@@ -59,6 +207,9 @@ export const useRiskStore = defineStore('risk', () => {
     error,
     getRiskById,
     fetchRisks,
-    fetchRiskById
+    fetchRiskById,
+    publishRisk,
+    lockRisk,
+    deleteRisk
   }
 })

@@ -29,7 +29,7 @@ export interface LoginResponse {
 }
 
 // Risk types
-export type RiskStatus = 'Draft' | 'Published' | 'Locked'
+export type RiskStatus = 'Draft' | 'Published' | 'Locked' | 'Deleted'
 export type RiskCategory = 'Strategic' | 'Operational' | 'Financial' | 'Compliance'
 export type TimeHorizon = '< 1 year' | '1-3 years' | '> 3 years'
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'
@@ -198,6 +198,9 @@ export interface AuditInfo {
   updatedAt: Date
   lockedBy?: string
   lockedAt?: Date
+  deletedBy?: string
+  deletedAt?: Date
+  deleteReason?: string
 }
 
 // Dashboard types

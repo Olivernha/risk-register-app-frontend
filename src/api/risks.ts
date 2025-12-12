@@ -29,6 +29,7 @@ export interface UpdateRiskRequest {
   ratings?: Rating[]
   averageRating?: AverageRating
   audit?: AuditInfo
+  status?: RiskStatus
 }
 
 export interface RiskFilters {

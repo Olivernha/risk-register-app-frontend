@@ -6,7 +6,6 @@
     </div>
 
     <template v-else>
-      <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
           <button
@@ -21,16 +20,63 @@
           <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Risk Details</h1>
           <p class="text-sm text-gray-600 dark:text-gray-400">{{ risk.refNo }} - {{ risk.title }}</p>
         </div>
-        <button
-          v-if="canEdit"
-          @click="$router.push(`/risks/${risk.id}/edit`)"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-        >
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        <div class="flex gap-2">
+            <button
+            v-if="canPublish"
+            @click="handlePublish"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+            >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Publish Risk
+            </button>
+            <button
+            v-if="canLock"
+            @click="handleLock"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors"
+            >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Lock Risk
+            </button>
+            <button
+            v-if="canDelete"
+            @click="handleDelete"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
+            >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Delete Risk
+            </button>
+            <button
+            v-if="canEdit"
+            @click="$router.push(`/risks/${risk.id}/edit`)"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+            >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Risk
+            </button>
+        </div>
+      </div>
+
+      <!-- Locked Warning Banner -->
+      <div v-if="risk.status === 'Locked'" class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          Edit Risk
-        </button>
+          <div class="flex-1">
+            <h3 class="font-medium text-purple-900 dark:text-purple-100 mb-1">Risk is Locked</h3>
+            <p class="text-sm text-purple-700 dark:text-purple-300">
+              This risk has been locked for the quarterly cycle. Master data and ratings are read-only. Mitigations can still be updated by action owners.
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- Main Content Grid -->
@@ -158,6 +204,14 @@
                 <span class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Last Updated</span>
                 <span class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(risk.audit?.updatedAt) }}</span>
               </div>
+              <div v-if="risk.status === 'Locked' && risk.audit?.lockedBy">
+                <span class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Locked By</span>
+                <span class="text-sm text-gray-900 dark:text-gray-100">{{ risk.audit.lockedBy }}</span>
+              </div>
+              <div v-if="risk.status === 'Locked' && risk.audit?.lockedAt">
+                <span class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Locked At</span>
+                <span class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(risk.audit.lockedAt) }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -191,6 +245,95 @@ onMounted(() => {
 const canEdit = computed(() => {
   return authStore.hasRole(['RiskManagement', 'Admin'])
 })
+
+const canPublish = computed(() => {
+  if (!risk.value) return false
+  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+  const isDraft = risk.value.status === 'Draft'
+  const hasOwners = risk.value.owners && risk.value.owners.length > 0
+  return isRM && isDraft && hasOwners
+})
+
+const canDelete = computed(() => {
+  if (!risk.value) return false
+  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+  const isDraft = risk.value.status === 'Draft'
+  const hasNoRatings = (!risk.value.ratings || risk.value.ratings.length === 0)
+  const hasNoMitigations = (!risk.value.mitigations || risk.value.mitigations.length === 0)
+  return isRM && isDraft && hasNoRatings && hasNoMitigations
+})
+
+const canLock = computed(() => {
+  if (!risk.value) return false
+  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+  const isPublished = risk.value.status === 'Published'
+  return isRM && isPublished
+})
+
+async function handlePublish() {
+  if (!risk.value) return
+  
+  if (!confirm('Are you sure you want to publish this risk? It will be visible to all assigned owners for rating.')) {
+    return
+  }
+
+  try {
+    await riskStore.publishRisk(risk.value.id)
+    alert('Risk published successfully!')
+    // No need to reload, store is reactive
+  } catch (e: any) {
+    alert(e.message)
+  }
+}
+
+async function handleDelete() {
+  if (!risk.value) return
+
+  const reason = prompt('Please enter a reason for deleting this risk:')
+  if (reason === null) return // user cancelled
+  if (!reason.trim()) {
+    alert('Deletion reason is required.')
+    return
+  }
+
+  try {
+    await riskStore.deleteRisk(risk.value.id, reason)
+    alert('Risk deleted successfully.')
+    route.push('/risks')
+  } catch (e: any) {
+    alert(e.message)
+  }
+}
+
+async function handleLock() {
+  if (!risk.value) return
+
+  try {
+    // First attempt without override
+    await riskStore.lockRisk(risk.value.id, false)
+    alert('Risk locked successfully!')
+  } catch (e: any) {
+    // Check if error is due to incomplete ratings
+    if (e.message.startsWith('INCOMPLETE_RATINGS:')) {
+      const pendingOwners = e.message.substring('INCOMPLETE_RATINGS:'.length)
+      const confirmOverride = confirm(
+        `Warning: The following owners have not submitted ratings:\n\n${pendingOwners}\n\n` +
+        `Do you want to lock this risk anyway?`
+      )
+      
+      if (confirmOverride) {
+        try {
+          await riskStore.lockRisk(risk.value.id, true)
+          alert('Risk locked successfully (with incomplete ratings).')
+        } catch (overrideError: any) {
+          alert(overrideError.message)
+        }
+      }
+    } else {
+      alert(e.message)
+    }
+  }
+}
 
 function getRiskLevelClass(level?: RiskLevel) {
   switch (level) {

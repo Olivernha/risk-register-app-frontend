@@ -1,5 +1,5 @@
 import api from '@/plugins/axios'
-import type { Version, VersionStatus } from '@/types'
+import type { Version } from '@/types'
 
 export interface CreateVersionRequest {
   cycle: string // Format: "YYYY Qn"

@@ -11,7 +11,7 @@
         "hasImpact": true,
         "amount": 5000000
       },
-      "status": "Published",
+      "status": "Locked",
       "version": "2025 Q4",
       "owners": [
         "U001"
@@ -88,10 +88,10 @@
       "audit": {
         "createdBy": "RM001",
         "createdAt": "2025-10-01T00:00:00Z",
-        "updatedBy": "RM001",
-        "updatedAt": "2025-10-15T00:00:00Z",
-        "lockedBy": null,
-        "lockedAt": null
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-12T07:42:05.584Z",
+        "lockedBy": "Current User",
+        "lockedAt": "2025-12-12T07:42:05.584Z"
       }
     },
     {
@@ -175,7 +175,11 @@
         "U001"
       ],
       "version": "2025 Q4",
-      "status": "Draft"
+      "status": "Published",
+      "audit": {
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-12T07:24:40.527Z"
+      }
     }
   ],
   "threads": [

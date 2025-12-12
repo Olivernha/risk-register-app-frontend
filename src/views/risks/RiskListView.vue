@@ -257,21 +257,24 @@ const allowedRisks = computed(() => {
     const user = authStore.user
     if (!user) return []
 
+    // Base filter: exclude deleted risks
+    const activeRisks = risks.value.filter((r: Risk) => r.status !== 'Deleted')
+
     // RM/Admin: View All
     if (['RiskManagement', 'Admin'].includes(user.role)) {
-        return risks.value
+        return activeRisks
     }
     
     // HOD: View risks where owners match HOD department
     if (user.role === 'HOD') {
-        return risks.value.filter((risk: Risk) => 
+        return activeRisks.filter((risk: Risk) => 
             risk.owners.some((owner: any) => getOwnerDepartment(owner.userId) === user.department)
         )
     }
 
     // Role Owner / Action Owner: View Assigned
     // Default fallback for others
-    return risks.value.filter((risk: Risk) => 
+    return activeRisks.filter((risk: Risk) => 
         risk.owners.some((o: any) => o.userId === user.userId) || 
         risk.mitigations.some((m: any) => m.actionOwner.userId === user.userId)
     )
