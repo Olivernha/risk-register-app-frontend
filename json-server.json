@@ -1,7 +1,10 @@
 {
   "port": 3000,
-  "host": "localhost",
-  "static": "./public",
   "watch": true,
-  "delay": 200
+  "static": "./public",
+  "read-only": false,
+  "no-cors": false,
+  "no-gzip": false,
+  "routes": "routes.json",
+  "snapshots": "./snapshots"
 }
