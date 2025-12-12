@@ -1,0 +1,16 @@
+{
+  "/api/*": "/$1",
+  "/risks/:id/ratings": "/risks/:id",
+  "/risks/:id/mitigations": "/risks/:id",
+  "/risks/:id/questions": "/risks/:id",
+  "/risks/:id/publish": "/risks/:id",
+  "/risks/:id/lock": "/risks/:id",
+  "/risks/:id/unlock": "/risks/:id",
+  "/risks/next-ref-no": "/risks",
+  "/versions/:id/lock": "/versions/:id",
+  "/versions/:id/unlock": "/versions/:id",
+  "/versions/:id/completeness": "/versions/:id",
+  "/versions/:id/statistics": "/versions/:id",
+  "/versions/active": "/versions?status=Active"
+}
+
