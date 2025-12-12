@@ -14,6 +14,19 @@
       </button>
     </div>
 
+    <!-- Locked Status Warning -->
+    <div v-if="risk && risk.status === 'Locked'" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        <div>
+          <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-500">Risk is Locked</h3>
+          <p class="mt-1 text-sm text-yellow-700 dark:text-yellow-400">This risk cannot be edited because its status is "Locked". Please contact an administrator to unlock it.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Form Card -->
     <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
       <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -24,8 +37,9 @@
           </label>
           <input
             v-model="form.title"
+            :disabled="isFormDisabled"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Enter risk title"
           />
         </div>
@@ -37,8 +51,9 @@
           </label>
           <textarea
             v-model="form.description"
+            :disabled="isFormDisabled"
             rows="4"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Describe the risk"
           ></textarea>
         </div>
@@ -194,7 +209,8 @@
           </button>
           <button
             type="submit"
-            class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+            :disabled="isFormDisabled"
+            class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Update Risk
           </button>
@@ -207,20 +223,32 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useRiskStore } from '@/stores/risk'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const riskStore = useRiskStore()
+const authStore = useAuthStore()
+
+const loading = ref(true)
+const submitting = ref(false)
+const risk = computed(() => riskStore.currentRisk)
+const originalOwners = ref<string[]>([])
+
+const isLocked = computed(() => risk.value?.status === 'Locked')
+const isFormDisabled = computed(() => isLocked.value || submitting.value)
 
 const form = ref({
-  title: 'Energy Transition: Decarbonisation and Competition from New Energy Sources',
-  description: 'Technology advancement and evolving business models in renewable energy...',
-  owners: ['michael', 'tan'],
+  title: '',
+  description: '',
+  owners: [] as string[],
   timeHorizon: '1-3',
-  financialImpact: '1000000',
+  financialImpact: '',
   currency: 'USD',
-  likelihood: '5',
-  impact: '5',
-  mitigations: ['Implement renewable energy strategy', 'Monitor regulatory changes'],
+  likelihood: '3',
+  impact: '3',
+  mitigations: [''] as string[],
   additionalQuestions: ''
 })
 
@@ -251,14 +279,122 @@ const removeMitigation = (index: number) => {
   form.value.mitigations.splice(index, 1)
 }
 
-const handleSubmit = () => {
-  console.log('Form updated:', form.value)
-  // TODO: API call to update risk
-  router.push(`/risks/${route.params.id}`)
+async function handleSubmit() {
+  if (!risk.value) return
+
+  // Check if locked
+  if (isLocked.value) {
+    alert('Cannot edit a locked risk. Please contact an administrator to unlock it.')
+    return
+  }
+
+  // Validate owners
+  if (!form.value.owners || form.value.owners.length === 0) {
+    alert('Cannot remove all owners. At least one risk owner is required.')
+    return
+  }
+
+  // Check if owners were removed
+  const removedOwners = originalOwners.value.filter(o => !form.value.owners.includes(o))
+  if (removedOwners.length > 0) {
+    const ownerNames = removedOwners.map(id => getOwnerName(id)).join(', ')
+    const confirmed = confirm(`You are removing the following owner(s): ${ownerNames}. Do you want to continue?`)
+    if (!confirmed) {
+      return
+    }
+  }
+
+  submitting.value = true
+  try {
+    const riskId = route.params.id as string
+    
+    // Prepare update data
+    const updateData = {
+      title: form.value.title,
+      description: form.value.description,
+      timeHorizon: `${form.value.timeHorizon} years`,
+      financialImpact: {
+        hasImpact: !!form.value.financialImpact,
+        amount: parseFloat(form.value.financialImpact) || 0,
+      },
+      owners: form.value.owners.map((owner: string) => ({
+        userId: owner,
+        name: getOwnerName(owner),
+        email: `${owner}@company.com`,
+        assignedAt: new Date().toISOString(),
+      })),
+      mitigations: form.value.mitigations
+        .filter(m => m.trim())
+        .map((mitigation, index) => ({
+          controlId: `mit-${Date.now()}-${index}`,
+          title: mitigation,
+          details: '',
+          controlOwner: { userId: 'user-001', name: 'TBD' },
+          actionOwner: { userId: 'user-001', name: 'TBD' },
+          status: 'Not Started',
+          targetDate: null,
+          actualCompletionDate: null,
+          progressPercentage: 0,
+          commentsThreadId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })),
+      audit: {
+        ...risk.value.audit,
+        updatedBy: authStore.user?.userId || 'current-user',
+        updatedAt: new Date().toISOString(),
+      },
+    }
+
+    await riskStore.updateRisk(riskId, updateData)
+    router.push(`/risks/${riskId}`)
+  } catch (error) {
+    console.error('Failed to update risk:', error)
+    alert('Failed to update risk. Please try again.')
+  } finally {
+    submitting.value = false
+  }
 }
 
-onMounted(() => {
-  // TODO: Load risk data from API
-  console.log('Loading risk:', route.params.id)
+function getOwnerName(userId: string): string {
+  const names: Record<string, string> = {
+    michael: 'Michael Wong',
+    tan: 'Tan Chok Liang',
+    chan: 'Chan Liang',
+    lim: 'Lim San San',
+  }
+  return names[userId] || userId
+}
+
+onMounted(async () => {
+  const riskId = route.params.id as string
+  try {
+    await riskStore.fetchRisk(riskId)
+    
+    if (risk.value) {
+      // Save original owners for comparison
+      originalOwners.value = risk.value.owners?.map((o: any) => o.userId) || []
+      
+      // Populate form with existing data
+      form.value = {
+        title: risk.value.title,
+        description: risk.value.description,
+        owners: [...originalOwners.value],
+        timeHorizon: risk.value.timeHorizon?.replace(' years', '') || '1-3',
+        financialImpact: risk.value.financialImpact?.amount?.toString() || '',
+        currency: 'USD',
+        likelihood: '3',
+        impact: '3',
+        mitigations: risk.value.mitigations?.map((m: any) => m.title) || [''],
+        additionalQuestions: ''
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load risk:', error)
+    alert('Risk not found')
+    router.push('/risks')
+  } finally {
+    loading.value = false
+  }
 })
 </script>

@@ -1,0 +1,9 @@
+{
+    "/api/*": "/$1",
+    "/risks/:id/ratings": "/risks/:id",
+    "/risks/:id/mitigations": "/risks/:id",
+    "/risks/:id/questions": "/risks/:id",
+    "/risks/:id/publish": "/risks/:id",
+    "/risks/:id/lock": "/risks/:id",
+    "/risks/:id/unlock": "/risks/:id"
+}

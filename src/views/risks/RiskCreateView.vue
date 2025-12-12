@@ -20,39 +20,53 @@
         <!-- Title -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Title
+            Title *
           </label>
           <input
             v-model="form.title"
+            @input="clearError('title')"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+              errors.title ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-gray-400'
+            ]"
             placeholder="Enter risk title"
           />
+          <p v-if="errors.title" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.title }}</p>
         </div>
 
         <!-- Description -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Description
+            Description *
           </label>
           <textarea
             v-model="form.description"
+            @input="clearError('description')"
             rows="4"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+              errors.description ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-gray-400'
+            ]"
             placeholder="Describe the risk"
           ></textarea>
+          <p v-if="errors.description" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.description }}</p>
         </div>
 
         <!-- Risk Owners and Time Horizon -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Risk Owners
+              Risk Owners *
             </label>
             <select
               v-model="form.owners"
+              @change="clearError('owners')"
               multiple
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              :class="[
+                'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                errors.owners ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-gray-400'
+              ]"
             >
               <option value="michael">Michael Wong</option>
               <option value="tan">Tan Chok Liang</option>
@@ -60,6 +74,7 @@
               <option value="lim">Lim San San</option>
             </select>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
+            <p v-if="errors.owners" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.owners }}</p>
           </div>
 
           <div>
@@ -223,6 +238,52 @@ const form = ref({
   additionalQuestions: ''
 })
 
+const errors = ref({
+  title: '',
+  description: '',
+  owners: '',
+  financialImpact: ''
+})
+
+function validateForm() {
+  // Reset errors
+  errors.value = {
+    title: '',
+    description: '',
+    owners: '',
+    financialImpact: ''
+  }
+
+  let isValid = true
+
+  // Title validation
+  if (!form.value.title || form.value.title.trim() === '') {
+    errors.value.title = 'Title is required'
+    isValid = false
+  }
+
+  // Description validation
+  if (!form.value.description || form.value.description.trim() === '') {
+    errors.value.description = 'Description is required'
+    isValid = false
+  }
+
+  // Risk owners validation
+  if (!form.value.owners || form.value.owners.length === 0) {
+    errors.value.owners = 'At least one risk owner is required'
+    isValid = false
+  }
+
+  // Financial impact validation - only required if user entered amount
+  // No validation needed as it's optional
+
+  return isValid
+}
+
+function clearError(field: keyof typeof errors.value) {
+  errors.value[field] = ''
+}
+
 const riskLevel = computed(() => {
   const score = parseInt(form.value.likelihood) * parseInt(form.value.impact)
   if (score >= 20) return 'Very High'
@@ -251,6 +312,16 @@ const removeMitigation = (index: number) => {
 }
 
 const handleSubmit = () => {
+  // Validate form
+  if (!validateForm()) {
+    // Scroll to first error
+    const firstError = document.querySelector('.text-red-600')
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+    return
+  }
+
   console.log('Form submitted:', form.value)
   // TODO: API call to save risk
   router.push('/risks')

@@ -1,0 +1,216 @@
+{
+    "risks": [
+        {
+            "id": 1,
+            "refNo": "R1",
+            "title": "Energy Transition Risk",
+            "description": "Risk of stranded assets due to shift towards renewable energy",
+            "timeHorizon": "1-3 years",
+            "category": "Strategic",
+            "financialImpact": {
+                "hasImpact": true,
+                "amount": 5000000
+            },
+            "owners": [
+                {
+                    "userId": "user-001",
+                    "name": "Michael Wong",
+                    "email": "michael.wong@company.com",
+                    "assignedAt": "2025-10-01T00:00:00Z"
+                }
+            ],
+            "version": "2025 Q4",
+            "status": "Published",
+            "averageRating": {
+                "likelihood": 4,
+                "impact": 5,
+                "riskLevel": "Very High"
+            },
+            "ratings": [],
+            "mitigations": [],
+            "questions": [],
+            "audit": {
+                "createdBy": "user-001",
+                "createdAt": "2025-10-01T00:00:00Z",
+                "updatedBy": "user-001",
+                "updatedAt": "2025-11-15T00:00:00Z",
+                "lockedBy": null,
+                "lockedAt": null
+            }
+        },
+        {
+            "id": 2,
+            "refNo": "R2",
+            "title": "Cybersecurity Threats",
+            "description": "Increasing sophistication of cyber attacks",
+            "timeHorizon": "< 1 year",
+            "category": "Operational",
+            "financialImpact": {
+                "hasImpact": true,
+                "amount": 2000000
+            },
+            "owners": [
+                {
+                    "userId": "user-002",
+                    "name": "Tan Chok Liang",
+                    "email": "tan.chok@company.com",
+                    "assignedAt": "2025-10-01T00:00:00Z"
+                }
+            ],
+            "version": "2025 Q4",
+            "status": "Published",
+            "averageRating": {
+                "likelihood": 3,
+                "impact": 4,
+                "riskLevel": "High"
+            },
+            "ratings": [],
+            "mitigations": [],
+            "questions": [],
+            "audit": {
+                "createdBy": "user-002",
+                "createdAt": "2025-10-05T00:00:00Z",
+                "updatedBy": "user-002",
+                "updatedAt": "2025-11-10T00:00:00Z",
+                "lockedBy": null,
+                "lockedAt": null
+            }
+        },
+        {
+            "id": 3,
+            "refNo": "R3",
+            "title": "Supply Chain Disruptions",
+            "description": "Potential disruptions due to geopolitical tensions",
+            "timeHorizon": "1-3 years",
+            "category": "Operational",
+            "financialImpact": {
+                "hasImpact": true,
+                "amount": 1500000
+            },
+            "owners": [
+                {
+                    "userId": "user-003",
+                    "name": "Sarah Chen",
+                    "email": "sarah.chen@company.com",
+                    "assignedAt": "2025-10-01T00:00:00Z"
+                }
+            ],
+            "version": "2025 Q4",
+            "status": "Published",
+            "averageRating": {
+                "likelihood": 3,
+                "impact": 3,
+                "riskLevel": "High"
+            },
+            "ratings": [],
+            "mitigations": [],
+            "questions": [],
+            "audit": {
+                "createdBy": "user-003",
+                "createdAt": "2025-10-08T00:00:00Z",
+                "updatedBy": "user-003",
+                "updatedAt": "2025-11-12T00:00:00Z",
+                "lockedBy": null,
+                "lockedAt": null
+            }
+        },
+        {
+            "id": 4,
+            "refNo": "R514",
+            "title": "test",
+            "description": "test",
+            "timeHorizon": "1-3 years",
+            "category": "Strategic",
+            "financialImpact": {
+                "hasImpact": true,
+                "amount": 333
+            },
+            "owners": [
+                {
+                    "userId": "michael",
+                    "name": "Michael Wong",
+                    "email": "michael@company.com",
+                    "assignedAt": "2025-12-09T04:23:34.663Z"
+                }
+            ],
+            "version": "2025 Q4",
+            "status": "Draft",
+            "ratings": [],
+            "mitigations": [],
+            "questions": [],
+            "audit": {
+                "createdBy": "be5e9ec1-0039-4c44-990a-764a2d7faf54",
+                "createdAt": "2025-12-09T03:39:45.514Z",
+                "updatedBy": "be5e9ec1-0039-4c44-990a-764a2d7faf54",
+                "updatedAt": "2025-12-09T04:23:34.663Z",
+                "lockedBy": null,
+                "lockedAt": null
+            }
+        },
+        {
+            "id": 5,
+            "refNo": "R032",
+            "title": "test",
+            "description": "test",
+            "timeHorizon": "1-3 years",
+            "category": "Strategic",
+            "financialImpact": {
+                "hasImpact": true,
+                "amount": 22
+            },
+            "owners": [],
+            "version": "2025 Q4",
+            "status": "Draft",
+            "ratings": [],
+            "mitigations": [
+                {
+                    "controlId": "mit-1765255340032-0",
+                    "title": "test",
+                    "details": "",
+                    "controlOwner": {
+                        "userId": "user-001",
+                        "name": "TBD"
+                    },
+                    "actionOwner": {
+                        "userId": "user-001",
+                        "name": "TBD"
+                    },
+                    "status": "Not Started",
+                    "targetDate": null,
+                    "actualCompletionDate": null,
+                    "progressPercentage": 0,
+                    "commentsThreadId": null,
+                    "createdAt": "2025-12-09T04:42:20.032Z",
+                    "updatedAt": "2025-12-09T04:42:20.032Z"
+                }
+            ],
+            "questions": [],
+            "audit": {
+                "createdBy": "be5e9ec1-0039-4c44-990a-764a2d7faf54",
+                "createdAt": "2025-12-09T04:42:20.032Z",
+                "updatedBy": "be5e9ec1-0039-4c44-990a-764a2d7faf54",
+                "updatedAt": "2025-12-09T04:42:20.032Z",
+                "lockedBy": null,
+                "lockedAt": null
+            }
+        }
+    ],
+    "versions": [
+        {
+            "id": 1,
+            "cycle": "2025 Q4",
+            "status": "Active",
+            "startDate": "2025-10-01T00:00:00Z",
+            "endDate": "2025-12-31T00:00:00Z"
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "userId": "user-001",
+            "name": "Michael Wong",
+            "email": "michael.wong@company.com",
+            "role": "RiskOwner"
+        }
+    ]
+}

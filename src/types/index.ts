@@ -39,6 +39,7 @@ export interface Risk {
   refNo: string
   title: string
   description: string
+  department?: string
   timeHorizon: TimeHorizon
   category: RiskCategory
   financialImpact: {

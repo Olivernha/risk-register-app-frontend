@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '@/plugins/axios'
+import VersionService, { type CreateVersionRequest } from '@/api/versions'
 import type { Version } from '@/types'
 
 export const useVersionStore = defineStore('version', () => {
@@ -25,8 +25,8 @@ export const useVersionStore = defineStore('version', () => {
   async function fetchVersions() {
     loading.value = true
     try {
-      const response = await api.get<Version[]>('/versions')
-      versions.value = response.data
+      const data = await VersionService.getVersions()
+      versions.value = data
       
       // Set selected version to active if not set
       if (!selectedVersion.value && activeVersion.value) {
@@ -44,6 +44,43 @@ export const useVersionStore = defineStore('version', () => {
     selectedVersion.value = cycle
   }
 
+  async function createVersion(data: CreateVersionRequest) {
+    loading.value = true
+    try {
+      // Logic to ensure previous version is locked could be here or backend
+      // check if there is an active version
+      if (activeVersion.value) {
+         throw new Error('There is already an active version. Please lock it first.')
+      }
+
+      const response = await VersionService.createVersion(data)
+      await fetchVersions() // Refresh list
+      return response
+    } catch (error) {
+      console.error('Failed to create version:', error)
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Lock a version to finalize quarterly cycle
+   */
+  async function lockVersion(id: string, force?: boolean) {
+    loading.value = true
+    try {
+      const response = await VersionService.lockVersion(id, { force })
+      await fetchVersions() // Refresh list
+      return response
+    } catch (error) {
+      console.error('Failed to lock version:', error)
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     versions,
     selectedVersion,
@@ -52,5 +89,7 @@ export const useVersionStore = defineStore('version', () => {
     currentVersion,
     fetchVersions,
     selectVersion,
+    createVersion,
+    lockVersion,
   }
 })
