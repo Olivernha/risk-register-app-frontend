@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Add/Edit Risk</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Create or modify risk information</p>
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Create Risk</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Create a new risk record with complete details</p>
       </div>
       <button
         @click="$router.push('/risks')"
@@ -17,170 +17,200 @@
     <!-- Form Card -->
     <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
       <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Title -->
+        <!-- Error Message -->
+        <div v-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+        </div>
+
+        <!-- Reference Number -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Title
+            Reference Number <span class="text-red-500">*</span>
+          </label>
+          <input
+            v-model="form.refNo"
+            type="text"
+            maxlength="20"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+              errors.refNo ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+            ]"
+            placeholder="e.g., R1, R2, R3..."
+            required
+          />
+          <p v-if="errors.refNo" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.refNo }}</p>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Unique identifier within the version (e.g., R1, R2, R3...)</p>
+        </div>
+
+        <!-- Risk Title -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Risk Title <span class="text-red-500">*</span>
           </label>
           <input
             v-model="form.title"
             type="text"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            placeholder="Enter risk title"
+            maxlength="200"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+              errors.title ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+            ]"
+            placeholder="Enter risk title (max 200 characters)"
+            required
           />
+          <p v-if="errors.title" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.title }}</p>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ form.title.length }}/200 characters</p>
         </div>
 
-        <!-- Description -->
+        <!-- Risk Description -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Description
+            Risk Description <span class="text-red-500">*</span>
           </label>
           <textarea
             v-model="form.description"
-            rows="4"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            placeholder="Describe the risk"
+            rows="6"
+            maxlength="2000"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+              errors.description ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+            ]"
+            placeholder="Describe the risk in detail (max 2000 characters)"
+            required
           ></textarea>
+          <p v-if="errors.description" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.description }}</p>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ form.description.length }}/2000 characters</p>
         </div>
 
-        <!-- Risk Owners and Time Horizon -->
+        <!-- Time Horizon and Category -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Risk Owners
+              Time Horizon <span class="text-red-500">*</span>
             </label>
             <select
-              v-model="form.owners"
-              multiple
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              v-model="form.timeHorizon"
+              :class="[
+                'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                errors.timeHorizon ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+              ]"
+              required
             >
-              <option value="michael">Michael Wong</option>
-              <option value="tan">Tan Chok Liang</option>
-              <option value="chan">Chan Liang</option>
-              <option value="lim">Lim San San</option>
+              <option value="">Select time horizon</option>
+              <option value="< 1 year">&lt; 1 year</option>
+              <option value="1-3 years">1-3 years</option>
+              <option value="> 3 years">&gt; 3 years</option>
             </select>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Hold Ctrl/Cmd to select multiple</p>
+            <p v-if="errors.timeHorizon" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.timeHorizon }}</p>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Time Horizon
+              Risk Category <span class="text-red-500">*</span>
             </label>
             <select
-              v-model="form.timeHorizon"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              v-model="form.category"
+              :class="[
+                'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                errors.category ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+              ]"
+              required
             >
-              <option value="1-3">1-3 years</option>
-              <option value="2-5">2-5 years</option>
-              <option value="4-5">4-5 years</option>
-              <option value="5+">5+ years</option>
+              <option value="">Select category</option>
+              <option value="Strategic">Strategic</option>
+              <option value="Operational">Operational</option>
+              <option value="Financial">Financial</option>
+              <option value="Compliance">Compliance</option>
             </select>
+            <p v-if="errors.category" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.category }}</p>
           </div>
         </div>
 
         <!-- Financial Impact -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Financial Impact
+            Financial Impact <span class="text-red-500">*</span>
           </label>
-          <div class="flex gap-4">
-            <input
-              v-model="form.financialImpact"
-              type="number"
-              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              placeholder="Amount"
-            />
-            <select
-              v-model="form.currency"
-              class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            >
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="SGD">SGD</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Likelihood x Impact -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Likelihood x Impact
-          </label>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs text-gray-600 dark:text-gray-400 mb-2">Likelihood</label>
-              <select
-                v-model="form.likelihood"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                <option value="1">1 - Negligible</option>
-                <option value="2">2 - Minor</option>
-                <option value="3">3 - Moderate</option>
-                <option value="4">4 - Major</option>
-                <option value="5">5 - Catastrophic</option>
-              </select>
+          <div class="space-y-3">
+            <div class="flex gap-4">
+              <label class="flex items-center">
+                <input
+                  v-model="form.financialImpact.hasImpact"
+                  type="radio"
+                  :value="true"
+                  class="mr-2"
+                />
+                <span class="text-sm text-gray-700 dark:text-gray-300">Yes</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  v-model="form.financialImpact.hasImpact"
+                  type="radio"
+                  :value="false"
+                  class="mr-2"
+                />
+                <span class="text-sm text-gray-700 dark:text-gray-300">No</span>
+              </label>
             </div>
-            <div>
-              <label class="block text-xs text-gray-600 dark:text-gray-400 mb-2">Impact</label>
-              <select
-                v-model="form.impact"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                <option value="1">1 - Negligible</option>
-                <option value="2">2 - Minor</option>
-                <option value="3">3 - Moderate</option>
-                <option value="4">4 - Major</option>
-                <option value="5">5 - Catastrophic</option>
-              </select>
-            </div>
-          </div>
-          <div v-if="riskLevel" class="mt-3 inline-block px-3 py-1 text-sm font-medium rounded" :class="riskLevelClass">
-            Risk Level: {{ riskLevel }}
-          </div>
-        </div>
-
-        <!-- Mitigation Measures -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Mitigation Measures
-          </label>
-          <div class="space-y-2">
-            <div v-for="(measure, index) in form.mitigations" :key="index" class="flex gap-2">
+            <div v-if="form.financialImpact.hasImpact">
+              <label class="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                Financial Impact Amount <span class="text-red-500">*</span>
+              </label>
               <input
-                v-model="form.mitigations[index]"
-                type="text"
-                class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                placeholder="Mitigation action"
+                v-model.number="form.financialImpact.amount"
+                type="number"
+                min="0"
+                step="0.01"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2',
+                  errors.financialImpact ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+                ]"
+                placeholder="Enter amount"
+                required
               />
-              <button
-                type="button"
-                @click="removeMitigation(index)"
-                class="px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md"
-              >
-                Remove
-              </button>
+              <p v-if="errors.financialImpact" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.financialImpact }}</p>
             </div>
-            <button
-              type="button"
-              @click="addMitigation"
-              class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            >
-              + Add Mitigation
-            </button>
           </div>
         </div>
 
-        <!-- Additional Questions -->
+        <!-- Risk Owners -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Additional Questions
+            Risk Owners <span class="text-red-500">*</span>
           </label>
-          <textarea
-            v-model="form.additionalQuestions"
-            rows="3"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
-            placeholder="Any additional questions or notes"
-          ></textarea>
+          <select
+            v-model="form.owners"
+            multiple
+            size="5"
+            :class="[
+              'w-full px-3 py-2 border rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+              errors.owners ? 'border-red-500 focus:ring-red-400' : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+            ]"
+            required
+          >
+            <option v-for="user in riskOwners" :key="user.userId" :value="user.userId">
+              {{ user.name }} ({{ user.email }})
+            </option>
+          </select>
+          <p v-if="errors.owners" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ errors.owners }}</p>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Hold Ctrl/Cmd to select multiple. Selected: {{ form.owners.length }} owner(s)
+          </p>
+        </div>
+
+        <!-- Version (Read-only) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Version
+          </label>
+          <input
+            :value="activeVersion?.cycle || 'No active version'"
+            type="text"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+            readonly
+            disabled
+          />
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Auto-set to current active version</p>
         </div>
 
         <!-- Action Buttons -->
@@ -194,9 +224,11 @@
           </button>
           <button
             type="submit"
-            class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+            :disabled="isSubmitting"
+            class="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white text-sm font-medium rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            Save
+            <span v-if="isSubmitting" class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+            {{ isSubmitting ? 'Creating...' : 'Create Risk' }}
           </button>
         </div>
       </form>
@@ -205,54 +237,169 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useVersionStore } from '@/stores/version'
+import { useNotifications } from '@/composables/useNotifications'
+import riskService, { type CreateRiskRequest } from '@/api/risks'
+import userService from '@/api/users'
+import type { User, TimeHorizon, RiskCategory } from '@/types'
 
 const router = useRouter()
+const versionStore = useVersionStore()
+const { showSuccess, showError } = useNotifications()
 
-const form = ref({
+const form = ref<{
+  refNo: string
+  title: string
+  description: string
+  timeHorizon: TimeHorizon | ''
+  category: RiskCategory | ''
+  financialImpact: {
+    hasImpact: boolean
+    amount?: number
+  }
+  owners: string[]
+}>({
+  refNo: '',
   title: '',
   description: '',
+  timeHorizon: '',
+  category: '',
+  financialImpact: {
+    hasImpact: false,
+    amount: undefined,
+  },
   owners: [],
-  timeHorizon: '1-3',
-  financialImpact: '',
-  currency: 'USD',
-  likelihood: '3',
-  impact: '3',
-  mitigations: [''],
-  additionalQuestions: ''
 })
 
-const riskLevel = computed(() => {
-  const score = parseInt(form.value.likelihood) * parseInt(form.value.impact)
-  if (score >= 20) return 'Very High'
-  if (score >= 15) return 'High'
-  if (score >= 8) return 'Medium'
-  if (score >= 1) return 'Low'
-  return ''
-})
+const errors = ref<Record<string, string>>({})
+const isSubmitting = ref(false)
+const riskOwners = ref<User[]>([])
+const loadingOwners = ref(false)
 
-const riskLevelClass = computed(() => {
-  switch (riskLevel.value) {
-    case 'Very High': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-    case 'High': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
-    case 'Medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
-    case 'Low': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-    default: return ''
+const activeVersion = computed(() => versionStore.activeVersion)
+
+onMounted(async () => {
+  // Fetch versions to get active version
+  try {
+    await versionStore.fetchVersions()
+    
+    // Auto-generate reference number if active version exists
+    if (activeVersion.value) {
+      try {
+        form.value.refNo = await riskService.getNextRefNo(activeVersion.value.cycle)
+      } catch (error) {
+        console.warn('Could not auto-generate ref number, user will enter manually')
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch versions:', error)
+  }
+
+  // Fetch risk owners (users with RiskOwner role)
+  loadingOwners.value = true
+  try {
+    riskOwners.value = await userService.getUsersByRole('RiskOwner')
+  } catch (error) {
+    console.error('Failed to fetch risk owners:', error)
+    showError('Failed to load risk owners. Please refresh the page.')
+  } finally {
+    loadingOwners.value = false
   }
 })
 
-const addMitigation = () => {
-  form.value.mitigations.push('')
+function validateForm(): boolean {
+  errors.value = {}
+
+  // Reference Number
+  if (!form.value.refNo || form.value.refNo.trim() === '') {
+    errors.value.refNo = 'Reference number is required'
+  } else if (form.value.refNo.length > 20) {
+    errors.value.refNo = 'Reference number must be at most 20 characters'
+  }
+
+  // Title
+  if (!form.value.title || form.value.title.trim() === '') {
+    errors.value.title = 'Risk title is required'
+  } else if (form.value.title.length > 200) {
+    errors.value.title = 'Title must be at most 200 characters'
+  }
+
+  // Description
+  if (!form.value.description || form.value.description.trim() === '') {
+    errors.value.description = 'Risk description is required'
+  } else if (form.value.description.length > 2000) {
+    errors.value.description = 'Description must be at most 2000 characters'
+  }
+
+  // Time Horizon
+  if (!form.value.timeHorizon) {
+    errors.value.timeHorizon = 'Time horizon is required'
+  }
+
+  // Category
+  if (!form.value.category) {
+    errors.value.category = 'Risk category is required'
+  }
+
+  // Financial Impact Amount
+  if (form.value.financialImpact.hasImpact) {
+    if (!form.value.financialImpact.amount || form.value.financialImpact.amount <= 0) {
+      errors.value.financialImpact = 'Financial impact amount is required when financial impact is Yes'
+    }
+  }
+
+  // Risk Owners
+  if (!form.value.owners || form.value.owners.length === 0) {
+    errors.value.owners = 'At least one risk owner is required'
+  }
+
+  // Active Version
+  if (!activeVersion.value) {
+    errors.value.version = 'No active version found. Please create an active version first.'
+  }
+
+  return Object.keys(errors.value).length === 0
 }
 
-const removeMitigation = (index: number) => {
-  form.value.mitigations.splice(index, 1)
-}
+async function handleSubmit() {
+  if (!validateForm()) {
+    showError('Please fix the errors in the form')
+    return
+  }
 
-const handleSubmit = () => {
-  console.log('Form submitted:', form.value)
-  // TODO: API call to save risk
-  router.push('/risks')
+  if (!activeVersion.value) {
+    showError('No active version found. Please create an active version first.')
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    const payload: CreateRiskRequest = {
+      refNo: form.value.refNo.trim(),
+      title: form.value.title.trim(),
+      description: form.value.description.trim(),
+      timeHorizon: form.value.timeHorizon as TimeHorizon,
+      category: form.value.category as RiskCategory,
+      financialImpact: {
+        hasImpact: form.value.financialImpact.hasImpact,
+        amount: form.value.financialImpact.hasImpact ? form.value.financialImpact.amount : undefined,
+      },
+      owners: form.value.owners,
+      version: activeVersion.value.cycle,
+    }
+
+    await riskService.createRisk(payload)
+    showSuccess(`Risk "${form.value.title}" created successfully`)
+    router.push('/risks')
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || error.message || 'Failed to create risk'
+    showError(errorMessage)
+    console.error('Failed to create risk:', error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
