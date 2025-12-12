@@ -12,7 +12,7 @@ export const useRiskStore = defineStore('risk', () => {
 
   // Getters
   const getRiskById = computed(() => {
-    return (id: string) => risks.value.find(r => r._id === id)
+    return (id: string) => risks.value.find(r => r.id === id)
   })
 
   // Actions
@@ -36,7 +36,7 @@ export const useRiskStore = defineStore('risk', () => {
       const risk = await riskService.getRisk(id)
       currentRisk.value = risk
       // Update local cache if exists
-      const index = risks.value.findIndex(r => r._id === id)
+      const index = risks.value.findIndex(r => r.id === id)
       if (index !== -1) {
         risks.value[index] = risk
       } else {

@@ -39,13 +39,13 @@
               >
                 <!-- Risks in this cell -->
                 <div class="flex flex-wrap gap-1 content-start h-full overflow-y-auto">
-                    <div v-for="risk in getRisksForCell(row, col)" :key="risk._id"
+                    <div v-for="risk in getRisksForCell(row, col)" :key="risk.id"
                         :class="[
                             'w-full h-full flex items-center justify-center text-xs font-bold text-white rounded cursor-pointer transition-transform hover:scale-105',
                             getRiskColorClass(risk)
                         ]"
                         :title="risk.title"
-                        @click="$router.push(`/risks/${risk._id}`)"
+                        @click="$router.push(`/risks/${risk.id}`)"
                     >
                         {{ risk.refNo }}
                     </div>

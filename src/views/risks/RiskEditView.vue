@@ -466,6 +466,7 @@ async function handleSubmit() {
   error.value = ''
 
   try {
+    // Prepare basic payload
     const payload: UpdateRiskRequest = {
       title: form.value.title.trim(),
       description: form.value.description.trim(),
@@ -478,7 +479,104 @@ async function handleSubmit() {
       owners: form.value.owners,
     }
 
-    await riskService.updateRisk(riskId.value, payload)
+    // Business Logic: Handle Owner Changes (Simulated implementation for json-server)
+    // In a real app, this logic would be in the backend. Here we manipulate the risk object and send a full update if possible,
+    // or just assume the backend does it. Since we are using json-server, we must do it here.
+
+    let updatedRisk: any = { ...risk.value, ...payload }
+
+    // Update Audit
+    // Note: We need a valid user ID for 'updatedBy'. For now, using 'RM001' or needing to fetch current user context.
+    const currentUser = 'RM001' // TODO: Get from auth store
+    updatedRisk.audit = {
+      ...updatedRisk.audit,
+      updatedBy: currentUser,
+      updatedAt: new Date(),
+    }
+
+    // Handle Ratings
+    // If owners removed: Mark their rating records (if any) as inactive?
+    // The Rating interface doesn't have 'active' field. We will filter them out from the main List but maybe keep in history if we had a separate structure.
+    // For this requirement: "Removing owner marks their rating inactive but retains for audit"
+    // We will assume "removing from risk.owners" is the main flag.
+    // However, if we need to keep the rating data, we should not delete it from 'ratings'.
+    // The Risk object has 'owners' (RiskOwner[]) and 'ratings' (Rating[]).
+    // The 'payload' only sends owner IDs. We need to construct the full Owner objects.
+
+    // 1. Update Risk Owners List
+    const newOwnerObjects = riskOwners.value
+      .filter(u => form.value.owners.includes(u.userId))
+      .map(u => ({
+        userId: u.userId,
+        name: u.name,
+        email: u.email,
+        assignedAt: new Date() // Ideally check if already existed to keep original date
+      }))
+    
+    // Preserve assignedAt for existing owners
+    updatedRisk.owners = newOwnerObjects.map((newOwner: any) => {
+        const existing = risk.value?.owners.find(o => o.userId === newOwner.userId)
+        return existing ? existing : newOwner
+    })
+
+    // 2. Handle New Ratings
+    // "Adding owner creates new blank rating record"
+    // Check for new owners who don't have a rating entry
+    updatedRisk.owners.forEach((owner: any) => {
+        const hasRating = updatedRisk.ratings.some((r: any) => r.ownerId === owner.userId)
+        if (!hasRating) {
+            // Create blank rating
+            updatedRisk.ratings.push({
+                ownerId: owner.userId,
+                currentLikelihood: 0,
+                currentImpact: 0,
+                basisThreadId: '', // Should ideally create a thread
+                submittedAt: new Date(), // Or null/undefined if allowed
+                updatedAt: new Date(),
+                history: []
+            })
+            // console.log(`Notification sent to ${owner.name}`) // Mock notification
+        }
+    })
+
+    // 3. Recalculate Average Rating (Simple average of all current ratings)
+    // Only count ratings from CURRENT owners
+    const activeRatings = updatedRisk.ratings.filter((r: any) => 
+        updatedRisk.owners.some((o: any) => o.userId === r.ownerId) && 
+        r.currentLikelihood > 0 && r.currentImpact > 0
+    )
+
+    if (activeRatings.length > 0) {
+        const totalL = activeRatings.reduce((sum: number, r: any) => sum + r.currentLikelihood, 0)
+        const totalI = activeRatings.reduce((sum: number, r: any) => sum + r.currentImpact, 0)
+        const avgL = Math.round(totalL / activeRatings.length)
+        const avgI = Math.round(totalI / activeRatings.length)
+        
+        // Use a store or utility to determine RiskLevel based on L/I
+        const riskLevel = 'Medium' // Placeholder logic
+        // TODO: Implement proper matrix lookup
+        
+        updatedRisk.averageRating = {
+            likelihood: avgL,
+            impact: avgI,
+            riskLevel: riskLevel as any,
+            color: '#eab308' // Placeholder
+        }
+    } else {
+        updatedRisk.averageRating = undefined
+    }
+
+    // Since we did complex logic, we might need to send the FULL object, or patch specific extra fields.
+    // json-server supports PATCH. We can pass the extra fields we calculated.
+    const fullPayload = {
+        ...payload,
+        owners: updatedRisk.owners,
+        ratings: updatedRisk.ratings,
+        averageRating: updatedRisk.averageRating,
+        audit: updatedRisk.audit
+    }
+
+    await riskService.updateRisk(riskId.value, fullPayload)
     showSuccess(`Risk "${form.value.title}" updated successfully`)
     router.push(`/risks/${riskId.value}`)
   } catch (err: any) {

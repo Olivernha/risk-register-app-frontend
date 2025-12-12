@@ -35,7 +35,7 @@ export type TimeHorizon = '< 1 year' | '1-3 years' | '> 3 years'
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'
 
 export interface Risk {
-  _id: string
+  id: string
   refNo: string
   title: string
   description: string
@@ -140,7 +140,7 @@ export interface Question {
 export type ThreadEntityType = 'rating_basis' | 'mitigation_progress' | 'question_reply'
 
 export interface Thread {
-  _id: string
+  id: string
   entityType: ThreadEntityType
   entityId: string
   riskRef: string
@@ -165,7 +165,7 @@ export interface Comment {
 export type VersionStatus = 'Active' | 'Locked'
 
 export interface Version {
-  _id: string
+  id: string
   cycle: string
   status: VersionStatus
   startDate: Date
@@ -210,7 +210,7 @@ export interface HeatmapCell {
 }
 
 export interface RiskSummary {
-  _id: string
+  id: string
   refNo: string
   title: string
   riskLevel: RiskLevel

@@ -1,5 +1,5 @@
 import api from '@/plugins/axios'
-import type { Risk, RiskStatus, RiskCategory, TimeHorizon } from '@/types'
+import type { Risk, RiskStatus, RiskCategory, TimeHorizon, RiskOwner, Rating, AverageRating, AuditInfo } from '@/types'
 
 export interface CreateRiskRequest {
   refNo: string
@@ -13,6 +13,7 @@ export interface CreateRiskRequest {
   }
   owners: string[] // User IDs
   version: string
+  status?: RiskStatus
 }
 
 export interface UpdateRiskRequest {
@@ -24,7 +25,10 @@ export interface UpdateRiskRequest {
     hasImpact: boolean
     amount?: number
   }
-  owners?: string[]
+  owners?: string[] | RiskOwner[]
+  ratings?: Rating[]
+  averageRating?: AverageRating
+  audit?: AuditInfo
 }
 
 export interface RiskFilters {

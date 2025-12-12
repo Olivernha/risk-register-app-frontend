@@ -23,7 +23,7 @@
         </div>
         <button
           v-if="canEdit"
-          @click="$router.push(`/risks/${risk._id}/edit`)"
+          @click="$router.push(`/risks/${risk.id}/edit`)"
           class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
         >
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@
             <ul class="space-y-2">
               <li v-for="owner in risk.owners" :key="owner.userId" class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-white text-xs font-medium">
-                  {{ owner.name.substring(0, 2).toUpperCase() }}
+                  {{ owner.name?.substring(0, 2).toUpperCase() }}
                 </div>
                 <span class="text-sm text-gray-900 dark:text-gray-100">{{ owner.name }}</span>
               </li>
@@ -92,7 +92,7 @@
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ mitigation.actionOwner.name }}</td>
                   </tr>
-                  <tr v-if="risk.mitigations.length === 0">
+                  <tr v-if="risk.mitigations?.length === 0">
                     <td colspan="4" class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                         No mitigation measures recorded.
                     </td>

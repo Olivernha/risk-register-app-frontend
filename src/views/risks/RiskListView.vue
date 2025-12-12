@@ -66,7 +66,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="risk in paginatedRisks" :key="risk._id" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
+            <tr v-for="risk in paginatedRisks" :key="risk.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                 {{ risk.refNo }}
               </td>
@@ -112,7 +112,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <button 
-                  @click="$router.push(`/risks/${risk._id}`)"
+                  @click="$router.push(`/risks/${risk.id}`)"
                   class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium"
                 >
                   View
@@ -219,9 +219,10 @@ function getStatusClass(status: string) {
 
 // Helper to get initials
 function getInitials(name: string) {
+ 
   return name
-    .split(' ')
-    .map(n => n[0])
+    ?.split(' ')
+    ?.map(n => n[0])
     .join('')
     .substring(0, 2)
     .toUpperCase()

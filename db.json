@@ -1,9 +1,9 @@
 {
   "risks": [
     {
-      "_id": "risk-001",
+      "id": "risk-001",
       "refNo": "R1",
-      "title": "Energy Transition Risk",
+      "title": "Energy Transition Risk 1",
       "description": "Risk of stranded assets due to shift towards renewable energy sources. The company faces significant financial exposure as traditional energy infrastructure becomes obsolete faster than anticipated.",
       "timeHorizon": "1-3 years",
       "category": "Strategic",
@@ -14,12 +14,7 @@
       "status": "Published",
       "version": "2025 Q4",
       "owners": [
-        {
-          "userId": "U001",
-          "name": "Michael Wong",
-          "email": "michael.wong@company.com",
-          "assignedAt": "2025-10-01T00:00:00Z"
-        }
+        "U001"
       ],
       "ratings": [
         {
@@ -36,13 +31,7 @@
               "likelihood": 5,
               "impact": 5,
               "changedAt": "2025-10-05T00:00:00Z",
-              "reason": "Initial assessment based on market trends"
-            },
-            {
-              "likelihood": 4,
-              "impact": 5,
-              "changedAt": "2025-10-10T00:00:00Z",
-              "reason": "Updated after mitigation measures implemented"
+              "reason": "Initial assessment"
             }
           ]
         }
@@ -106,7 +95,7 @@
       }
     },
     {
-      "_id": "risk-002",
+      "id": "risk-002",
       "refNo": "R2",
       "title": "Cybersecurity Threats",
       "description": "Increasing sophistication of cyber attacks targeting critical infrastructure and sensitive data. Risk of data breaches, ransomware attacks, and system disruptions.",
@@ -140,7 +129,7 @@
       }
     },
     {
-      "_id": "risk-003",
+      "id": "risk-003",
       "refNo": "R3",
       "title": "Regulatory Compliance Changes",
       "description": "Risk of non-compliance with evolving regulatory requirements in multiple jurisdictions, potentially resulting in fines and operational restrictions.",
@@ -171,11 +160,27 @@
         "lockedBy": null,
         "lockedAt": null
       }
+    },
+    {
+      "id": "6f3e",
+      "refNo": "R4",
+      "title": "test 1",
+      "description": "test 1",
+      "timeHorizon": "< 1 year",
+      "category": "Operational",
+      "financialImpact": {
+        "hasImpact": false
+      },
+      "owners": [
+        "U001"
+      ],
+      "version": "2025 Q4",
+      "status": "Draft"
     }
   ],
   "threads": [
     {
-      "_id": "thread-001",
+      "id": "thread-001",
       "entityType": "rating_basis",
       "entityId": "risk-001",
       "riskRef": "R1",
@@ -199,14 +204,16 @@
           "message": "Thank you for the detailed assessment. Please provide updated projections by end of month.",
           "timestamp": "2025-10-06T14:30:00Z",
           "edited": false,
-          "mentions": ["U001"]
+          "mentions": [
+            "U001"
+          ]
         }
       ],
       "createdAt": "2025-10-05T10:00:00Z",
       "lastCommentAt": "2025-10-06T14:30:00Z"
     },
     {
-      "_id": "thread-002",
+      "id": "thread-002",
       "entityType": "mitigation_progress",
       "entityId": "mit-001",
       "riskRef": "R1",
@@ -227,7 +234,7 @@
       "lastCommentAt": "2025-10-15T09:00:00Z"
     },
     {
-      "_id": "thread-003",
+      "id": "thread-003",
       "entityType": "question_reply",
       "entityId": "q-001",
       "riskRef": "R1",
@@ -250,7 +257,7 @@
   ],
   "users": [
     {
-      "_id": "user-001",
+      "id": "user-001",
       "userId": "U001",
       "name": "Michael Wong",
       "email": "michael.wong@company.com",
@@ -259,17 +266,22 @@
       "permissions": [
         {
           "resource": "risks",
-          "actions": ["read"]
+          "actions": [
+            "read"
+          ]
         },
         {
           "resource": "ratings",
-          "actions": ["create", "update"]
+          "actions": [
+            "create",
+            "update"
+          ]
         }
       ],
       "active": true
     },
     {
-      "_id": "user-002",
+      "id": "user-002",
       "userId": "U002",
       "name": "Tan Chok Liang",
       "email": "tan.chokliang@company.com",
@@ -278,17 +290,22 @@
       "permissions": [
         {
           "resource": "risks",
-          "actions": ["read"]
+          "actions": [
+            "read"
+          ]
         },
         {
           "resource": "ratings",
-          "actions": ["create", "update"]
+          "actions": [
+            "create",
+            "update"
+          ]
         }
       ],
       "active": true
     },
     {
-      "_id": "user-003",
+      "id": "user-003",
       "userId": "U003",
       "name": "Chan Liang",
       "email": "chan.liang@company.com",
@@ -297,17 +314,22 @@
       "permissions": [
         {
           "resource": "risks",
-          "actions": ["read"]
+          "actions": [
+            "read"
+          ]
         },
         {
           "resource": "ratings",
-          "actions": ["create", "update"]
+          "actions": [
+            "create",
+            "update"
+          ]
         }
       ],
       "active": true
     },
     {
-      "_id": "user-004",
+      "id": "user-004",
       "userId": "RM001",
       "name": "Risk Manager",
       "email": "risk.manager@company.com",
@@ -316,17 +338,26 @@
       "permissions": [
         {
           "resource": "risks",
-          "actions": ["create", "read", "update", "delete"]
+          "actions": [
+            "create",
+            "read",
+            "update",
+            "delete"
+          ]
         },
         {
           "resource": "versions",
-          "actions": ["create", "read", "update"]
+          "actions": [
+            "create",
+            "read",
+            "update"
+          ]
         }
       ],
       "active": true
     },
     {
-      "_id": "user-005",
+      "id": "user-005",
       "userId": "U005",
       "name": "Sarah Chen",
       "email": "sarah.chen@company.com",
@@ -335,13 +366,16 @@
       "permissions": [
         {
           "resource": "mitigations",
-          "actions": ["read", "update"]
+          "actions": [
+            "read",
+            "update"
+          ]
         }
       ],
       "active": true
     },
     {
-      "_id": "user-006",
+      "id": "user-006",
       "userId": "U006",
       "name": "David Lee",
       "email": "david.lee@company.com",
@@ -350,42 +384,195 @@
       "permissions": [
         {
           "resource": "mitigations",
-          "actions": ["read", "update"]
+          "actions": [
+            "read",
+            "update"
+          ]
         }
       ],
       "active": true
     }
   ],
   "heatmap": [
-    { "_id": "heatmap-1-1", "likelihood": 1, "impact": 1, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-1-2", "likelihood": 1, "impact": 2, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-1-3", "likelihood": 1, "impact": 3, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-1-4", "likelihood": 1, "impact": 4, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-1-5", "likelihood": 1, "impact": 5, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-2-1", "likelihood": 2, "impact": 1, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-2-2", "likelihood": 2, "impact": 2, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-2-3", "likelihood": 2, "impact": 3, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-2-4", "likelihood": 2, "impact": 4, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-2-5", "likelihood": 2, "impact": 5, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-3-1", "likelihood": 3, "impact": 1, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-3-2", "likelihood": 3, "impact": 2, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-3-3", "likelihood": 3, "impact": 3, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-3-4", "likelihood": 3, "impact": 4, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-3-5", "likelihood": 3, "impact": 5, "riskLevel": "High", "color": "#f97316" },
-    { "_id": "heatmap-4-1", "likelihood": 4, "impact": 1, "riskLevel": "Low", "color": "#22c55e" },
-    { "_id": "heatmap-4-2", "likelihood": 4, "impact": 2, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-4-3", "likelihood": 4, "impact": 3, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-4-4", "likelihood": 4, "impact": 4, "riskLevel": "High", "color": "#f97316" },
-    { "_id": "heatmap-4-5", "likelihood": 4, "impact": 5, "riskLevel": "Very High", "color": "#E91E63" },
-    { "_id": "heatmap-5-1", "likelihood": 5, "impact": 1, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-5-2", "likelihood": 5, "impact": 2, "riskLevel": "Medium", "color": "#eab308" },
-    { "_id": "heatmap-5-3", "likelihood": 5, "impact": 3, "riskLevel": "High", "color": "#f97316" },
-    { "_id": "heatmap-5-4", "likelihood": 5, "impact": 4, "riskLevel": "Very High", "color": "#E91E63" },
-    { "_id": "heatmap-5-5", "likelihood": 5, "impact": 5, "riskLevel": "Very High", "color": "#E91E63" }
+    {
+      "id": "heatmap-1-1",
+      "likelihood": 1,
+      "impact": 1,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-1-2",
+      "likelihood": 1,
+      "impact": 2,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-1-3",
+      "likelihood": 1,
+      "impact": 3,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-1-4",
+      "likelihood": 1,
+      "impact": 4,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-1-5",
+      "likelihood": 1,
+      "impact": 5,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-2-1",
+      "likelihood": 2,
+      "impact": 1,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-2-2",
+      "likelihood": 2,
+      "impact": 2,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-2-3",
+      "likelihood": 2,
+      "impact": 3,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-2-4",
+      "likelihood": 2,
+      "impact": 4,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-2-5",
+      "likelihood": 2,
+      "impact": 5,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-3-1",
+      "likelihood": 3,
+      "impact": 1,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-3-2",
+      "likelihood": 3,
+      "impact": 2,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-3-3",
+      "likelihood": 3,
+      "impact": 3,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-3-4",
+      "likelihood": 3,
+      "impact": 4,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-3-5",
+      "likelihood": 3,
+      "impact": 5,
+      "riskLevel": "High",
+      "color": "#f97316"
+    },
+    {
+      "id": "heatmap-4-1",
+      "likelihood": 4,
+      "impact": 1,
+      "riskLevel": "Low",
+      "color": "#22c55e"
+    },
+    {
+      "id": "heatmap-4-2",
+      "likelihood": 4,
+      "impact": 2,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-4-3",
+      "likelihood": 4,
+      "impact": 3,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-4-4",
+      "likelihood": 4,
+      "impact": 4,
+      "riskLevel": "High",
+      "color": "#f97316"
+    },
+    {
+      "id": "heatmap-4-5",
+      "likelihood": 4,
+      "impact": 5,
+      "riskLevel": "Very High",
+      "color": "#E91E63"
+    },
+    {
+      "id": "heatmap-5-1",
+      "likelihood": 5,
+      "impact": 1,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-5-2",
+      "likelihood": 5,
+      "impact": 2,
+      "riskLevel": "Medium",
+      "color": "#eab308"
+    },
+    {
+      "id": "heatmap-5-3",
+      "likelihood": 5,
+      "impact": 3,
+      "riskLevel": "High",
+      "color": "#f97316"
+    },
+    {
+      "id": "heatmap-5-4",
+      "likelihood": 5,
+      "impact": 4,
+      "riskLevel": "Very High",
+      "color": "#E91E63"
+    },
+    {
+      "id": "heatmap-5-5",
+      "likelihood": 5,
+      "impact": 5,
+      "riskLevel": "Very High",
+      "color": "#E91E63"
+    }
   ],
   "versions": [
     {
-      "_id": "version-001",
+      "id": "version-001",
       "cycle": "2025 Q4",
       "status": "Active",
       "startDate": "2025-10-01T00:00:00Z",
@@ -408,7 +595,7 @@
       }
     },
     {
-      "_id": "version-002",
+      "id": "version-002",
       "cycle": "2025 Q3",
       "status": "Locked",
       "startDate": "2025-07-01T00:00:00Z",
@@ -417,7 +604,9 @@
       "createdAt": "2025-07-01T00:00:00Z",
       "lockedBy": "RM001",
       "lockedAt": "2025-09-30T23:59:59Z",
-      "snapshotIds": ["snapshot-001"],
+      "snapshotIds": [
+        "snapshot-001"
+      ],
       "statistics": {
         "totalRisks": 29,
         "risksByLevel": {
@@ -432,4 +621,3 @@
     }
   ]
 }
-
