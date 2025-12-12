@@ -13,4 +13,3 @@
   "/versions/:id/statistics": "/versions/:id",
   "/versions/active": "/versions?status=Active"
 }
-

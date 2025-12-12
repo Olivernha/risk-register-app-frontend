@@ -19,34 +19,40 @@
     </div>
 
     <!-- Filters -->
+    <!-- Filters -->
     <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="md:col-span-2">
           <input
+            v-model="searchQuery"
             type="text"
             placeholder="Search risks..."
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
         </div>
-        <select class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+        <select v-model="selectedLevel" class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
           <option>All Levels</option>
           <option>Very High</option>
           <option>High</option>
           <option>Medium</option>
           <option>Low</option>
         </select>
-        <select class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+        <select v-model="selectedCategory" class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
           <option>All Categories</option>
           <option>Strategic</option>
           <option>Operational</option>
           <option>Financial</option>
+          <option>Compliance</option>
         </select>
       </div>
     </div>
 
     <!-- Risk List Table -->
     <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
+      <div v-if="loading" class="p-8 text-center text-gray-500 dark:text-gray-400">
+        Loading risks...
+      </div>
+      <div v-else class="overflow-x-auto">
         <table class="w-full">
           <thead class="bg-gray-50 dark:bg-slate-700/50">
             <tr>
@@ -60,13 +66,13 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <tr v-for="risk in sampleRisks" :key="risk.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
+            <tr v-for="risk in paginatedRisks" :key="risk._id" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                {{ risk.ref }}
+                {{ risk.refNo }}
               </td>
               <td class="px-6 py-4">
                 <div class="text-sm text-gray-900 dark:text-gray-100">{{ risk.title }}</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ risk.description }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ risk.description }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="inline-block px-2 py-1 text-xs font-medium rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
@@ -76,20 +82,18 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span :class="[
                   'inline-block px-2 py-1 text-xs font-medium rounded',
-                  risk.level === 'Very High' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : '',
-                  risk.level === 'High' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400' : '',
-                  risk.level === 'Medium' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' : '',
-                  risk.level === 'Low' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : ''
+                  getRiskLevelClass(risk.averageRating?.riskLevel)
                 ]">
-                  {{ risk.level }}
+                  {{ risk.averageRating?.riskLevel || 'Unrated' }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex -space-x-2">
-                  <div v-for="(owner, idx) in risk.owners.slice(0, 3)" :key="idx" 
+                  <div v-for="(owner, idx) in risk.owners.slice(0, 3)" :key="owner.userId" 
                     class="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-white text-xs font-medium border-2 border-white dark:border-slate-800"
+                    :title="owner.name"
                   >
-                    {{ owner }}
+                    {{ getInitials(owner.name) }}
                   </div>
                   <div v-if="risk.owners.length > 3" 
                     class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 text-xs font-medium border-2 border-white dark:border-slate-800"
@@ -101,20 +105,23 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span :class="[
                   'inline-block px-2 py-1 text-xs font-medium rounded',
-                  risk.status === 'Published' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : '',
-                  risk.status === 'Draft' ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : '',
-                  risk.status === 'Locked' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' : ''
+                  getStatusClass(risk.status)
                 ]">
                   {{ risk.status }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <button 
-                  @click="$router.push(`/risks/${risk.id}`)"
+                  @click="$router.push(`/risks/${risk._id}`)"
                   class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium"
                 >
                   View
                 </button>
+              </td>
+            </tr>
+            <tr v-if="paginatedRisks.length === 0" class="hover:bg-transparent">
+              <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                No risks found matching your criteria.
               </td>
             </tr>
           </tbody>
@@ -124,16 +131,22 @@
       <!-- Pagination -->
       <div class="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div class="text-sm text-gray-600 dark:text-gray-400">
-          Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">29</span> risks
+          Showing <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> to <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, totalRisks) }}</span> of <span class="font-medium">{{ totalRisks }}</span> risks
         </div>
         <div class="flex gap-2">
-          <button class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700">
+          <button 
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Previous
           </button>
-          <button class="px-3 py-1 bg-gray-800 dark:bg-gray-700 text-white rounded text-sm">1</button>
-          <button class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700">2</button>
-          <button class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700">3</button>
-          <button class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700">
+          <button class="px-3 py-1 bg-gray-800 dark:bg-gray-700 text-white rounded text-sm">{{ currentPage }}</button>
+          <button 
+            @click="currentPage++"
+            :disabled="currentPage * itemsPerPage >= totalRisks"
+            class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Next
           </button>
         </div>
@@ -143,61 +156,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useRiskStore } from '@/stores/riskStore'
+import type { Risk, RiskLevel, RiskCategory } from '@/types'
 
 const authStore = useAuthStore()
+const riskStore = useRiskStore()
+const { risks, loading } = storeToRefs(riskStore)
 
-const sampleRisks = ref([
-  {
-    id: 1,
-    ref: 'R1.1',
-    title: 'Energy Transition Risk',
-    description: 'Regulatory changes in renewable energy',
-    category: 'Strategic',
-    level: 'Very High',
-    owners: ['JD', 'SM', 'AK'],
-    status: 'Published'
-  },
-  {
-    id: 2,
-    ref: 'R1.2',
-    title: 'Carbon Offset Compliance',
-    description: 'Meeting carbon neutrality targets',
-    category: 'Compliance',
-    level: 'High',
-    owners: ['DW', 'KC'],
-    status: 'Published'
-  },
-  {
-    id: 3,
-    ref: 'R2.1',
-    title: 'Supply Chain Disruption',
-    description: 'Biomass supply availability',
-    category: 'Operational',
-    level: 'Medium',
-    owners: ['AL', 'TN', 'BR', 'MK'],
-    status: 'Draft'
-  },
-  {
-    id: 4,
-    ref: 'R2.2',
-    title: 'Technology Obsolescence',
-    description: 'Legacy systems modernization',
-    category: 'Operational',
-    level: 'Medium',
-    owners: ['JD'],
-    status: 'Locked'
-  },
-  {
-    id: 5,
-    ref: 'R3.1',
-    title: 'Market Price Volatility',
-    description: 'Energy market price fluctuations',
-    category: 'Financial',
-    level: 'High',
-    owners: ['SM', 'DW'],
-    status: 'Published'
-  },
-])
+const searchQuery = ref('')
+const selectedLevel = ref('All Levels')
+const selectedCategory = ref('All Categories')
+
+onMounted(() => {
+  riskStore.fetchRisks()
+})
+
+const filteredRisks = computed(() => {
+  return risks.value.filter(risk => {
+    const matchesSearch = 
+      risk.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+      risk.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      risk.refNo.toLowerCase().includes(searchQuery.value.toLowerCase())
+    
+    const matchesLevel = selectedLevel.value === 'All Levels' || risk.averageRating?.riskLevel === selectedLevel.value
+    const matchesCategory = selectedCategory.value === 'All Categories' || risk.category === selectedCategory.value
+
+    return matchesSearch && matchesLevel && matchesCategory
+  })
+})
+
+// Pagination (mock for now)
+const currentPage = ref(1)
+const itemsPerPage = 10
+const totalRisks = computed(() => filteredRisks.value.length)
+const paginatedRisks = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredRisks.value.slice(start, end)
+})
+
+function getRiskLevelClass(level?: RiskLevel) {
+  switch (level) {
+    case 'Very High': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+    case 'High': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
+    case 'Medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+    case 'Low': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+    default: return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+  }
+}
+
+function getStatusClass(status: string) {
+  switch (status) {
+    case 'Published': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+    case 'Draft': return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+    case 'Locked': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
+    default: return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+  }
+}
+
+// Helper to get initials
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase()
+}
 </script>

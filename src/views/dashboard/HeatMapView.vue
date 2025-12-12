@@ -32,99 +32,37 @@
         <!-- Grid Container -->
         <div class="flex-1">
           <!-- Grid -->
-          <div class="grid grid-cols-5 gap-2 mb-4">
-            <!-- Row 5 - Catastrophic -->
-            <div class="col-span-5 grid grid-cols-5 gap-2">
-              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R1
-              </div>
-              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R10
-              </div>
-              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R10
-              </div>
-              <div class="aspect-square bg-red-500 dark:bg-red-600 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R10
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
+          <div class="grid grid-cols-1 gap-2 mb-4">
+            <div v-for="row in rows" :key="row" class="grid grid-cols-5 gap-2">
+              <div v-for="col in cols" :key="col" 
+                class="aspect-square rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-700/30 p-1 overflow-hidden hover:bg-white dark:hover:bg-slate-700 transition-colors relative group"
+              >
+                <!-- Risks in this cell -->
+                <div class="flex flex-wrap gap-1 content-start h-full overflow-y-auto">
+                    <div v-for="risk in getRisksForCell(row, col)" :key="risk._id"
+                        :class="[
+                            'w-full h-full flex items-center justify-center text-xs font-bold text-white rounded cursor-pointer transition-transform hover:scale-105',
+                            getRiskColorClass(risk)
+                        ]"
+                        :title="risk.title"
+                        @click="$router.push(`/risks/${risk._id}`)"
+                    >
+                        {{ risk.refNo }}
+                    </div>
+                    
+                    <!-- Fallback visualization if multiple risks (not fitting in one big box) -->
+                    <!-- Actually the wireframe showed big boxes. If multiple risks exist in same cell (Likelihood/Impact pair), they should probably share the space or be small pills. -->
+                    <!-- But usually 5x5 matrix cells are large enough? -->
+                    <!-- Let's assume for now we just stack them or show them as pills. -->
+                    <!-- Re-reading wireframe: "grid grid-cols-5 gap-2" implies the CELL is the grid item. -->
+                    <!-- If I have multiple risks, I can't simple put multiple full-size divs. -->
+                    <!-- I'll change the styling to Grid/Flex inside the cell. -->
+                </div>
                 
-              </div>
-            </div>
-
-            <!-- Row 4 - Major -->
-            <div class="col-span-5 grid grid-cols-5 gap-2">
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-red-400 dark:bg-red-500 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R2
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-            </div>
-
-            <!-- Row 3 - Moderate -->
-            <div class="col-span-5 grid grid-cols-5 gap-2">
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-yellow-400 dark:bg-yellow-500 rounded flex items-center justify-center text-gray-900 dark:text-gray-100 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R3
-              </div>
-              <div class="aspect-square bg-yellow-400 dark:bg-yellow-500 rounded flex items-center justify-center text-gray-900 dark:text-gray-100 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R3
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-            </div>
-
-            <!-- Row 2 - Minor -->
-            <div class="col-span-5 grid grid-cols-5 gap-2">
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R1
-              </div>
-              <div class="aspect-square bg-gray-400 dark:bg-gray-500 rounded flex items-center justify-center text-white text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                H3
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                H
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-            </div>
-
-            <!-- Row 1 - Negligible -->
-            <div class="col-span-5 grid grid-cols-5 gap-2">
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R1
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R1
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                R1
-              </div>
-              <div class="aspect-square bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center text-gray-700 dark:text-gray-300 text-sm font-medium hover:opacity-80 cursor-pointer transition-opacity">
-                
+                <!-- Empty State -->
+                <div v-if="getRisksForCell(row, col).length === 0" class="w-full h-full flex items-center justify-center">
+                    <span class="text-gray-300 dark:text-gray-600 text-[10px]">-</span>
+                </div>
               </div>
             </div>
           </div>
@@ -176,5 +114,39 @@
 </template>
 
 <script setup lang="ts">
-// Heat map component matching wireframe design
+import { ref, computed, onMounted } from 'vue'
+import { useRiskStore } from '@/stores/riskStore'
+import { storeToRefs } from 'pinia'
+import type { Risk } from '@/types'
+
+const riskStore = useRiskStore()
+const { risks } = storeToRefs(riskStore)
+
+onMounted(() => {
+  riskStore.fetchRisks()
+})
+
+// Grid configuration
+const rows = [5, 4, 3, 2, 1] // Likelihood (High to Low)
+const cols = [1, 2, 3, 4, 5] // Impact (Low to High)
+
+// Helper to get risks for a specific cell
+const getRisksForCell = (likelihood: number, impact: number) => {
+  return risks.value.filter(risk => 
+    (risk.averageRating?.likelihood === likelihood) && 
+    (risk.averageRating?.impact === impact)
+  )
+}
+
+// Helper to get color for a cell/risk
+const getRiskColorClass = (risk: Risk) => {
+  const level = risk.averageRating?.riskLevel
+  switch (level) {
+    case 'Very High': return 'bg-red-500 dark:bg-red-600'
+    case 'High': return 'bg-orange-500 dark:bg-orange-600' // Changed from red-400 for better distinction
+    case 'Medium': return 'bg-yellow-400 dark:bg-yellow-500'
+    case 'Low': return 'bg-green-500 dark:bg-green-600' // Changed from gray-400/300
+    default: return 'bg-gray-300 dark:bg-gray-600'
+  }
+}
 </script>

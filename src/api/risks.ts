@@ -42,7 +42,29 @@ class RiskService {
     const response = await api.get<Risk[]>('/risks', {
       params: filters,
     })
-    return response.data
+    // json-server returns array directly
+    let risks = Array.isArray(response.data) ? response.data : []
+    
+    // Apply filters manually if needed (json-server handles basic filtering via query params)
+    if (filters?.version) {
+      risks = risks.filter(r => r.version === filters.version)
+    }
+    if (filters?.status) {
+      risks = risks.filter(r => r.status === filters.status)
+    }
+    if (filters?.category) {
+      risks = risks.filter(r => r.category === filters.category)
+    }
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase()
+      risks = risks.filter(r => 
+        r.title.toLowerCase().includes(searchLower) ||
+        r.description.toLowerCase().includes(searchLower) ||
+        r.refNo.toLowerCase().includes(searchLower)
+      )
+    }
+    
+    return risks
   }
 
   /**
@@ -81,10 +103,22 @@ class RiskService {
    * Get next reference number for a version
    */
   async getNextRefNo(version: string) {
-    const response = await api.get<{ nextRefNo: string }>(`/risks/next-ref-no`, {
-      params: { version },
-    })
-    return response.data.nextRefNo
+    try {
+      // Try to get existing risks for the version
+      const risks = await this.getRisks({ version })
+      const refNumbers = risks
+        .map(r => r.refNo)
+        .filter(ref => /^R\d+$/.test(ref))
+        .map(ref => parseInt(ref.replace('R', '')))
+        .filter(num => !isNaN(num))
+      
+      const nextNum = refNumbers.length > 0 ? Math.max(...refNumbers) + 1 : 1
+      return `R${nextNum}`
+    } catch (error) {
+      // Fallback if API call fails
+      console.warn('Could not fetch existing risks, using default R1')
+      return 'R1'
+    }
   }
 }
 

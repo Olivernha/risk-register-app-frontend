@@ -5,7 +5,7 @@ import router from '@/router'
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
@@ -35,6 +35,11 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
+    // json-server returns data directly, ensure it's properly formatted
+    if (response.data && typeof response.data === 'object') {
+      // Data is already in response.data, return as is
+      return response
+    }
     return response
   },
   async (error) => {

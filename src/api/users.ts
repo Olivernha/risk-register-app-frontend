@@ -7,17 +7,16 @@ class UserService {
    */
   async getUsers() {
     const response = await api.get<User[]>('/users')
-    return response.data
+    return Array.isArray(response.data) ? response.data : []
   }
 
   /**
    * Get users by role
    */
   async getUsersByRole(role: UserRole) {
-    const response = await api.get<User[]>('/users', {
-      params: { role },
-    })
-    return response.data
+    const response = await api.get<User[]>('/users')
+    // Filter by role since json-server doesn't support complex queries
+    return response.data.filter(user => user.role === role)
   }
 
   /**

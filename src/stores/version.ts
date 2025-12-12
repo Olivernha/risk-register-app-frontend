@@ -26,7 +26,8 @@ export const useVersionStore = defineStore('version', () => {
     loading.value = true
     try {
       const response = await api.get<Version[]>('/versions')
-      versions.value = response.data
+      // json-server returns array directly
+      versions.value = Array.isArray(response.data) ? response.data : []
       
       // Set selected version to active if not set
       if (!selectedVersion.value && activeVersion.value) {
