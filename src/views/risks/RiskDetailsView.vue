@@ -139,8 +139,15 @@
           <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Mitigation Measures</h3>
-              <button class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
-                Action thread →
+              <button
+                v-if="canAddMitigation"
+                @click="showCreateMitigationModal = true"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Mitigation
               </button>
             </div>
             <div class="overflow-x-auto">
@@ -151,22 +158,43 @@
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Details</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Owner</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Target Date</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                   <tr v-for="mitigation in risk.mitigations" :key="mitigation.controlId" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
                     <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ mitigation.title }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ mitigation.details }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                      <div class="max-w-xs truncate" :title="stripHtml(mitigation.details)">
+                        {{ stripHtml(mitigation.details) }}
+                      </div>
+                    </td>
                     <td class="px-4 py-3">
-                      <span class="inline-block px-2 py-1 text-xs font-medium rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                      <span :class="[
+                        'inline-block px-2 py-1 text-xs font-medium rounded',
+                        getMitigationStatusClass(mitigation.status)
+                      ]">
                         {{ mitigation.status }}
                       </span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ mitigation.actionOwner.name }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ formatDate(mitigation.targetDate) }}</td>
                   </tr>
                   <tr v-if="risk.mitigations?.length === 0">
-                    <td colspan="4" class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
-                        No mitigation measures recorded.
+                    <td colspan="5" class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
+                      <div class="flex flex-col items-center gap-2">
+                        <svg class="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p>No mitigation measures recorded.</p>
+                        <button
+                          v-if="canAddMitigation"
+                          @click="showCreateMitigationModal = true"
+                          class="mt-2 text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                        >
+                          Add your first mitigation
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -243,21 +271,33 @@
         </div>
       </div>
     </template>
+
+    <!-- Create Mitigation Modal -->
+    <CreateMitigationModal
+      :is-open="showCreateMitigationModal"
+      :risk-id="risk?.id || ''"
+      :risk-ref="risk?.refNo || ''"
+      @close="showCreateMitigationModal = false"
+      @created="handleMitigationCreated"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
 import BasisThread from '@/components/risks/BasisThread.vue'
-import type { RiskLevel } from '@/types'
+import CreateMitigationModal from '@/components/mitigations/CreateMitigationModal.vue'
+import type { RiskLevel, MitigationStatus } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const riskStore = useRiskStore()
+
+const showCreateMitigationModal = ref(false)
 
 const risk = computed(() => {
   const id = route.params.id as string
@@ -308,6 +348,13 @@ const canLock = computed(() => {
   const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
   const isPublished = risk.value.status === 'Published'
   return isRM && isPublished
+})
+
+const canAddMitigation = computed(() => {
+  if (!risk.value) return false
+  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+  const isNotDraft = risk.value.status !== 'Draft'
+  return isRM && isNotDraft
 })
 
 async function handlePublish() {
@@ -375,12 +422,27 @@ async function handleLock() {
   }
 }
 
+async function handleMitigationCreated() {
+  // Refresh risk data
+  const id = route.params.id as string
+  await riskStore.fetchRiskById(id)
+}
+
 function getRiskLevelClass(level?: RiskLevel) {
   switch (level) {
     case 'Very High': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
     case 'High': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
     case 'Medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
     case 'Low': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+    default: return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+  }
+}
+
+function getMitigationStatusClass(status: MitigationStatus) {
+  switch (status) {
+    case 'Completed': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+    case 'Ongoing': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+    case 'Not Started': return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
     default: return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
   }
 }
@@ -397,6 +459,12 @@ function getStatusClass(status: string) {
 function formatDate(date: string | Date | undefined) {
   if (!date) return 'N/A'
   return new Date(date).toLocaleDateString()
+}
+
+function stripHtml(html: string): string {
+  const tmp = document.createElement('div')
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ''
 }
 
 async function handleThreadIdUpdate(ownerId: string, newThreadId: string) {

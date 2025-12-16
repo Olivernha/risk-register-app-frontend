@@ -57,6 +57,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/reports/RiskReportView.vue'),
       },
       {
+        path: 'my-actions',
+        name: 'MyActions',
+        component: () => import('@/views/mitigations/MyActionsView.vue'),
+        meta: { requiresRole: ['ActionOwner'] },
+      },
+      {
         path: 'versions',
         name: 'Versions',
         component: () => import('@/views/versions/VersionListView.vue'),

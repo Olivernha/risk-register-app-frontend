@@ -173,13 +173,33 @@
       ],
       "ratings": [],
       "averageRating": null,
-      "mitigations": [],
+      "mitigations": [
+        {
+          "controlId": "mit-1765861886810",
+          "title": "hello world",
+          "details": "<p>test</p>",
+          "controlOwner": {
+            "userId": "RM001",
+            "name": "Risk Manager"
+          },
+          "actionOwner": {
+            "userId": "nayha@tuaspower.com.sg",
+            "name": "Oliver Nayha"
+          },
+          "status": "Ongoing",
+          "targetDate": "2025-12-17T00:00:00.000Z",
+          "progressPercentage": 0,
+          "commentsThreadId": "eL1xPJX",
+          "createdAt": "2025-12-16T05:11:26.843Z",
+          "updatedAt": "2025-12-16T05:11:26.843Z"
+        }
+      ],
       "questions": [],
       "audit": {
         "createdBy": "RM001",
         "createdAt": "2025-10-05T00:00:00Z",
-        "updatedBy": "RM001",
-        "updatedAt": "2025-10-05T00:00:00Z",
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-16T05:11:26.843Z",
         "lockedBy": null,
         "lockedAt": null
       }
@@ -371,6 +391,16 @@
       "createdAt": "2025-12-16T04:19:11.459Z",
       "lastCommentAt": "2025-12-16T04:37:59.401Z",
       "id": "3fnMDPL"
+    },
+    {
+      "entityType": "mitigation_progress",
+      "entityId": "mit-1765861886810",
+      "riskRef": "R3",
+      "version": "2025 Q4",
+      "comments": [],
+      "createdAt": "2025-12-16T05:11:26.810Z",
+      "lastCommentAt": "2025-12-16T05:11:26.810Z",
+      "id": "eL1xPJX"
     }
   ],
   "users": [
