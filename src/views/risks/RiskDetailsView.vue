@@ -119,6 +119,22 @@
             </ul>
           </div>
 
+          <!-- Rating Basis Threads -->
+          <div v-if="risk.ratings && risk.ratings.length > 0" class="space-y-6">
+            <BasisThread
+              v-for="rating in risk.ratings"
+              :key="rating.ownerId"
+              :thread-id="rating.basisThreadId || null"
+              :rating="rating"
+              :owner="risk.owners.find((o: any) => o.userId === rating.ownerId) || null"
+              :risk-id="risk.id"
+              :risk-ref="risk.refNo"
+              :version="risk.version"
+              :is-locked="risk.status === 'Locked'"
+              @update-thread-id="(newId) => handleThreadIdUpdate(rating.ownerId, newId)"
+            />
+          </div>
+
           <!-- Mitigation Measures -->
           <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex items-center justify-between mb-4">
@@ -235,6 +251,7 @@ import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
+import BasisThread from '@/components/risks/BasisThread.vue'
 import type { RiskLevel } from '@/types'
 
 const route = useRoute()
@@ -380,5 +397,19 @@ function getStatusClass(status: string) {
 function formatDate(date: string | Date | undefined) {
   if (!date) return 'N/A'
   return new Date(date).toLocaleDateString()
+}
+
+async function handleThreadIdUpdate(ownerId: string, newThreadId: string) {
+  if (!risk.value) return
+
+  try {
+    const updatedRatings = risk.value.ratings.map(r => 
+      r.ownerId === ownerId ? { ...r, basisThreadId: newThreadId } : r
+    )
+    
+    await riskStore.updateRisk(risk.value.id, { ratings: updatedRatings })
+  } catch (e) {
+    console.error('Failed to update risk with new thread ID', e)
+  }
 }
 </script>

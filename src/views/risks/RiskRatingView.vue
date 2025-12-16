@@ -229,6 +229,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
+import threadService from '@/api/threads'
 import type { RiskLevel } from '@/types'
 
 const route = useRoute()
@@ -334,13 +335,54 @@ async function handleSubmit() {
   submitting.value = true
 
   try {
+    // Create or get basis thread first
+    let threadId = existingRating.value?.basisThreadId
+    if (!threadId) {
+      // Create new thread
+      const newThread = await threadService.createThread({
+        entityType: 'rating_basis',
+        entityId: `${riskId}-${authStore.user.userId}`, // Unique per owner
+        riskRef: risk.value.refNo,
+        version: risk.value.version,
+      })
+      threadId = newThread.id
+      
+      // Add initial basis comment if provided
+      if (formData.value.basisForRating && formData.value.basisForRating.trim().length > 0) {
+        await threadService.addComment(
+          threadId,
+          {
+            message: formData.value.basisForRating,
+            mentions: [],
+          },
+          authStore.user.userId,
+          authStore.user.name,
+          authStore.user.role
+        )
+      }
+    } else {
+      // Add update comment to existing thread
+      if (existingRating.value && formData.value.updateComment && formData.value.updateComment.trim().length > 0) {
+        await threadService.addComment(
+          threadId,
+          {
+            message: formData.value.updateComment,
+            mentions: [],
+          },
+          authStore.user.userId,
+          authStore.user.name,
+          authStore.user.role
+        )
+      }
+    }
+
     const ratingData = {
       ownerId: authStore.user.userId,
       currentLikelihood: formData.value.currentLikelihood,
       currentImpact: formData.value.currentImpact,
       residualLikelihood: formData.value.residualLikelihood || undefined,
       residualImpact: formData.value.residualImpact || undefined,
-      basisThreadId: existingRating.value?.basisThreadId || `thread-${Date.now()}`,
+      basisThreadId: threadId,
       submittedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       history: existingRating.value?.history || []
@@ -352,7 +394,7 @@ async function handleSubmit() {
         likelihood: existingRating.value.currentLikelihood,
         impact: existingRating.value.currentImpact,
         changedAt: new Date(),
-        reason: 'Updated rating'
+        reason: formData.value.updateComment || 'Updated rating'
       })
     }
 
@@ -364,13 +406,12 @@ async function handleSubmit() {
     // Calculate average rating
     const averageRating = calculateAverageRating(updatedRatings)
 
-    // Update risk
+    // Update risk with thread ID
     await riskStore.updateRisk(riskId, {
       ratings: updatedRatings,
       averageRating: averageRating
     })
 
-    // TODO: Create/append to basis thread
     // TODO: Notify RM
 
     alert('Rating submitted successfully!')

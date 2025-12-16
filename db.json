@@ -213,7 +213,7 @@
           "ownerId": "nayha@tuaspower.com.sg",
           "currentLikelihood": 5,
           "currentImpact": 5,
-          "basisThreadId": "thread-1765854066650",
+          "basisThreadId": "3fnMDPL",
           "submittedAt": "2025-12-16T03:42:34.733Z",
           "updatedAt": "2025-12-16T03:42:34.733Z",
           "history": [
@@ -317,6 +317,38 @@
       ],
       "createdAt": "2025-10-20T11:00:00Z",
       "lastCommentAt": "2025-10-20T11:00:00Z"
+    },
+    {
+      "entityType": "rating_basis",
+      "entityId": "6f3e-nayha@tuaspower.com.sg",
+      "riskRef": "R4",
+      "version": "2025 Q4",
+      "comments": [
+        {
+          "commentId": "comment-1765859446139",
+          "userId": "nayha@tuaspower.com.sg",
+          "userName": "Nay Htet Aung",
+          "userRole": "RiskOwner",
+          "message": "<p>hello world</p><p></p>",
+          "timestamp": "2025-12-16T04:30:46.139Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765859598880",
+          "userId": "nayha@tuaspower.com.sg",
+          "userName": "Nay Htet Aung",
+          "userRole": "RiskOwner",
+          "message": "<p>@Nay Htet Aung test</p>",
+          "timestamp": "2025-12-16T04:33:18.880Z",
+          "edited": false,
+          "mentions": [],
+          "parentId": "comment-1765859446139"
+        }
+      ],
+      "createdAt": "2025-12-16T04:19:11.459Z",
+      "lastCommentAt": "2025-12-16T04:33:18.880Z",
+      "id": "3fnMDPL"
     }
   ],
   "users": [

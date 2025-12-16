@@ -159,6 +159,7 @@ export interface Comment {
   timestamp: Date
   edited: boolean
   mentions: string[]
+  parentId?: string
 }
 
 // Version types
