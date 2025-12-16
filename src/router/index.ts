@@ -46,6 +46,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresRole: ['RiskManagement', 'Admin'] },
       },
       {
+        path: 'risks/:id/rate',
+        name: 'RiskRate',
+        component: () => import('@/views/risks/RiskRatingView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         path: 'reports',
         name: 'Reports',
         component: () => import('@/views/reports/RiskReportView.vue'),

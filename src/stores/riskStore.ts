@@ -52,6 +52,28 @@ export const useRiskStore = defineStore('risk', () => {
     }
   }
 
+  async function updateRisk(id: string, data: any) {
+    loading.value = true
+    error.value = null
+    try {
+      const updatedRisk = await riskService.updateRisk(id, data)
+      
+      // Update local cache
+      const index = risks.value.findIndex((r: Risk) => r.id === id)
+      if (index !== -1) {
+        risks.value[index] = updatedRisk
+      }
+      currentRisk.value = updatedRisk
+
+      return updatedRisk
+    } catch (e: any) {
+      error.value = e.message || `Failed to update risk ${id}`
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function publishRisk(id: string) {
     loading.value = true
     error.value = null
@@ -208,6 +230,7 @@ export const useRiskStore = defineStore('risk', () => {
     getRiskById,
     fetchRisks,
     fetchRiskById,
+    updateRisk,
     publishRisk,
     lockRisk,
     deleteRisk

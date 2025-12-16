@@ -52,6 +52,16 @@
             Delete Risk
             </button>
             <button
+            v-if="canRate"
+            @click="$router.push(`/risks/${risk.id}/rate`)"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+            >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Rate Risk
+            </button>
+            <button
             v-if="canEdit"
             @click="$router.push(`/risks/${risk.id}/edit`)"
             class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white text-sm font-medium rounded-md hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
@@ -222,12 +232,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
 import type { RiskLevel } from '@/types'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const riskStore = useRiskStore()
 
@@ -261,6 +272,13 @@ const canDelete = computed(() => {
   const hasNoRatings = (!risk.value.ratings || risk.value.ratings.length === 0)
   const hasNoMitigations = (!risk.value.mitigations || risk.value.mitigations.length === 0)
   return isRM && isDraft && hasNoRatings && hasNoMitigations
+})
+
+const canRate = computed(() => {
+  if (!risk.value || !authStore.user) return false
+  const isPublished = risk.value.status === 'Published'
+  const isOwner = risk.value.owners.some((o: any) => o.userId === authStore.user?.userId)
+  return isPublished && isOwner
 })
 
 const canLock = computed(() => {
@@ -299,7 +317,7 @@ async function handleDelete() {
   try {
     await riskStore.deleteRisk(risk.value.id, reason)
     alert('Risk deleted successfully.')
-    route.push('/risks')
+    router.push('/risks')
   } catch (e: any) {
     alert(e.message)
   }

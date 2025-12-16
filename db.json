@@ -14,7 +14,18 @@
       "status": "Locked",
       "version": "2025 Q4",
       "owners": [
-        "U001"
+        {
+          "userId": "U001",
+          "name": "Michael Wong",
+          "email": "michael.wong@company.com",
+          "assignedAt": "2025-10-01T00:00:00Z"
+        },
+        {
+          "userId": "nayha@tuaspower.com.sg",
+          "name": "Oliver Nayha",
+          "email": "nayha@tuaspower.com.sg",
+          "assignedAt": "2025-12-16T02:56:00Z"
+        }
       ],
       "ratings": [
         {
@@ -113,6 +124,12 @@
           "name": "Tan Chok Liang",
           "email": "tan.chokliang@company.com",
           "assignedAt": "2025-10-01T00:00:00Z"
+        },
+        {
+          "userId": "nayha@tuaspower.com.sg",
+          "name": "Oliver Nayha",
+          "email": "nayha@tuaspower.com.sg",
+          "assignedAt": "2025-12-16T02:48:00Z"
         }
       ],
       "ratings": [],
@@ -138,7 +155,7 @@
       "financialImpact": {
         "hasImpact": false
       },
-      "status": "Draft",
+      "status": "Published",
       "version": "2025 Q4",
       "owners": [
         {
@@ -146,6 +163,12 @@
           "name": "Chan Liang",
           "email": "chan.liang@company.com",
           "assignedAt": "2025-10-05T00:00:00Z"
+        },
+        {
+          "userId": "nayha@tuaspower.com.sg",
+          "name": "Oliver Nayha",
+          "email": "nayha@tuaspower.com.sg",
+          "assignedAt": "2025-12-16T02:56:00Z"
         }
       ],
       "ratings": [],
@@ -172,8 +195,38 @@
         "hasImpact": false
       },
       "owners": [
-        "U001"
+        {
+          "userId": "U001",
+          "name": "Michael Wong",
+          "email": "michael.wong@company.com",
+          "assignedAt": "2025-10-01T00:00:00Z"
+        },
+        {
+          "userId": "nayha@tuaspower.com.sg",
+          "name": "Oliver Nayha",
+          "email": "nayha@tuaspower.com.sg",
+          "assignedAt": "2025-12-16T02:56:00Z"
+        }
       ],
+      "ratings": [
+        {
+          "ownerId": "nayha@tuaspower.com.sg",
+          "currentLikelihood": 1,
+          "currentImpact": 1,
+          "basisThreadId": "thread-1765854066650",
+          "submittedAt": "2025-12-16T03:01:06.650Z",
+          "updatedAt": "2025-12-16T03:01:06.650Z",
+          "history": []
+        }
+      ],
+      "averageRating": {
+        "likelihood": 1,
+        "impact": 1,
+        "riskLevel": "Low",
+        "color": "#22c55e"
+      },
+      "mitigations": [],
+      "questions": [],
       "version": "2025 Q4",
       "status": "Published",
       "audit": {
@@ -390,6 +443,30 @@
           "resource": "mitigations",
           "actions": [
             "read",
+            "update"
+          ]
+        }
+      ],
+      "active": true
+    },
+    {
+      "id": "user-007",
+      "userId": "nayha@tuaspower.com.sg",
+      "name": "Oliver Nayha",
+      "email": "nayha@tuaspower.com.sg",
+      "role": "RiskOwner",
+      "department": "Engineering",
+      "permissions": [
+        {
+          "resource": "risks",
+          "actions": [
+            "read"
+          ]
+        },
+        {
+          "resource": "ratings",
+          "actions": [
+            "create",
             "update"
           ]
         }
