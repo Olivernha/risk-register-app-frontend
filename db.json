@@ -211,19 +211,26 @@
       "ratings": [
         {
           "ownerId": "nayha@tuaspower.com.sg",
-          "currentLikelihood": 1,
-          "currentImpact": 1,
+          "currentLikelihood": 5,
+          "currentImpact": 5,
           "basisThreadId": "thread-1765854066650",
-          "submittedAt": "2025-12-16T03:01:06.650Z",
-          "updatedAt": "2025-12-16T03:01:06.650Z",
-          "history": []
+          "submittedAt": "2025-12-16T03:42:34.733Z",
+          "updatedAt": "2025-12-16T03:42:34.733Z",
+          "history": [
+            {
+              "likelihood": 1,
+              "impact": 1,
+              "changedAt": "2025-12-16T03:42:34.733Z",
+              "reason": "Updated rating"
+            }
+          ]
         }
       ],
       "averageRating": {
-        "likelihood": 1,
-        "impact": 1,
-        "riskLevel": "Low",
-        "color": "#22c55e"
+        "likelihood": 5,
+        "impact": 5,
+        "riskLevel": "Very High",
+        "color": "#ef4444"
       },
       "mitigations": [],
       "questions": [],

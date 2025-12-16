@@ -112,7 +112,7 @@
         </div>
 
         <!-- Basis for Rating -->
-        <div>
+        <div v-if="!existingRating">
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Basis for Rating <span class="text-red-500">*</span>
           </label>
@@ -127,6 +127,20 @@
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
             {{ formData.basisForRating.length }} / 50 characters minimum
           </p>
+        </div>
+
+        <!-- Comment for Update -->
+        <div v-if="existingRating">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Reason for Update <span class="text-red-500">*</span>
+          </label>
+          <textarea
+            v-model="formData.updateComment"
+            required
+            rows="4"
+            placeholder="Please provide a reason for changing the rating..."
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
         </div>
 
         <!-- Residual Assessment Section (Optional) -->
@@ -202,7 +216,7 @@
             :disabled="submitting || !isFormValid"
             class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ submitting ? 'Submitting...' : 'Submit Rating' }}
+            {{ submitting ? 'Submitting...' : (existingRating ? 'Update Rating' : 'Submit Rating') }}
           </button>
         </div>
       </form>
@@ -233,7 +247,8 @@ const formData = ref({
   currentImpact: 0,
   basisForRating: '',
   residualLikelihood: 0,
-  residualImpact: 0
+  residualImpact: 0,
+  updateComment: ''
 })
 
 // Risk level matrix (5x5)
@@ -257,7 +272,8 @@ onMounted(async () => {
         currentImpact: existingRating.value.currentImpact,
         basisForRating: '', // Don't pre-fill basis, require new justification
         residualLikelihood: existingRating.value.residualLikelihood || 0,
-        residualImpact: existingRating.value.residualImpact || 0
+        residualImpact: existingRating.value.residualImpact || 0,
+        updateComment: ''
       }
     }
   } catch (e: any) {
@@ -303,9 +319,12 @@ const calculatedResidualRiskLevel = computed(() => {
 })
 
 const isFormValid = computed(() => {
-  return formData.value.currentLikelihood > 0 &&
-         formData.value.currentImpact > 0 &&
-         formData.value.basisForRating.length >= 50
+  const baseValid = formData.value.currentLikelihood > 0 &&
+                  formData.value.currentImpact > 0
+  if (existingRating.value) {
+    return baseValid && formData.value.updateComment.length > 0
+  }
+  return baseValid && formData.value.basisForRating.length >= 50
 })
 
 async function handleSubmit() {
@@ -332,7 +351,7 @@ async function handleSubmit() {
       ratingData.history.push({
         likelihood: existingRating.value.currentLikelihood,
         impact: existingRating.value.currentImpact,
-        changedAt: new Date().toISOString(),
+        changedAt: new Date(),
         reason: 'Updated rating'
       })
     }

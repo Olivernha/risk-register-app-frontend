@@ -173,6 +173,74 @@ export const useRiskStore = defineStore('risk', () => {
     }
   }
 
+  async function updateRiskRating(riskId: string, ownerId: string, newRating: any, comment: string) {
+    loading.value = true
+    error.value = null
+    try {
+      const risk = risks.value.find((r: Risk) => r.id === riskId) || await riskService.getRisk(riskId)
+      if (!risk) throw new Error('Risk not found')
+
+      if (risk.status === 'Locked') {
+        throw new Error('Cannot update rating on a locked risk.')
+      }
+
+      if (!comment) {
+        throw new Error('A comment is required to explain the change.')
+      }
+
+      const ratingIndex = risk.ratings.findIndex(r => r.ownerId === ownerId)
+      if (ratingIndex === -1) {
+        throw new Error('Rating not found for this owner.')
+      }
+
+      const oldRating = risk.ratings[ratingIndex]
+      const historyEntry = {
+        likelihood: oldRating.currentLikelihood,
+        impact: oldRating.currentImpact,
+        changedAt: new Date(),
+        reason: comment
+      }
+
+      const updatedRating = {
+        ...oldRating,
+        ...newRating,
+        updatedAt: new Date(),
+        history: [...oldRating.history, historyEntry]
+      }
+
+      risk.ratings[ratingIndex] = updatedRating
+
+      // Recalculate average rating
+      // This is a simplified calculation. A more robust implementation would be needed.
+      const totalLikelihood = risk.ratings.reduce((acc, r) => acc + r.currentLikelihood, 0)
+      const totalImpact = risk.ratings.reduce((acc, r) => acc + r.currentImpact, 0)
+      risk.averageRating = {
+        likelihood: totalLikelihood / risk.ratings.length,
+        impact: totalImpact / risk.ratings.length,
+        riskLevel: 'Medium', // Simplified
+        color: 'yellow'
+      }
+
+      const updatedRisk = await riskService.updateRisk(riskId, { ratings: risk.ratings, averageRating: risk.averageRating })
+
+      const index = risks.value.findIndex(r => r.id === riskId)
+      if (index !== -1) {
+        risks.value[index] = updatedRisk
+      }
+      currentRisk.value = updatedRisk
+
+      // Mock notification
+      console.log(`[Notification System] RM notified of rating change for risk ${risk.refNo}`)
+
+      return updatedRisk
+    } catch (e: any) {
+      error.value = e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function deleteRisk(id: string, reason: string) {
     loading.value = true
     error.value = null
@@ -233,6 +301,7 @@ export const useRiskStore = defineStore('risk', () => {
     updateRisk,
     publishRisk,
     lockRisk,
+    updateRiskRating,
     deleteRisk
   }
 })

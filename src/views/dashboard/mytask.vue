@@ -245,7 +245,7 @@ const pendingRatings = computed(() => {
     if (!currentUserId.value) return []
     return risks.value.filter((risk: Risk) => {
         const isOwner = risk.owners.some((o: RiskOwner) => o.userId === currentUserId.value)
-        if (!isOwner) return false
+        if (!isOwner || risk.status === 'Locked') return false
         
         const myRating = risk.ratings.find((r: Rating) => r.ownerId === currentUserId.value)
         // Considered pending if no rating object exists OR likelihood/impact are 0
