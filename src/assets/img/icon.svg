@@ -1,0 +1,65 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient for depth -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f8f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ececec;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="200" fill="#7C3AED" rx="40"/>
+  
+  <!-- Subtle grid pattern for industrial feel -->
+  <g opacity="0.05">
+    <line x1="0" y1="50" x2="200" y2="50" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="100" x2="200" y2="100" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="150" x2="200" y2="150" stroke="white" stroke-width="1"/>
+    <line x1="50" y1="0" x2="50" y2="200" stroke="white" stroke-width="1"/>
+    <line x1="100" y1="0" x2="100" y2="200" stroke="white" stroke-width="1"/>
+    <line x1="150" y1="0" x2="150" y2="200" stroke="white" stroke-width="1"/>
+  </g>
+  
+  <!-- Shield outline - main protection symbol -->
+  <path d="M100 40 L150 55 L150 105 Q150 140 100 165 Q50 140 50 105 L50 55 Z" 
+        fill="none" 
+        stroke="white" 
+        stroke-width="6"
+        stroke-linejoin="round"
+        opacity="0.9"/>
+  
+  <!-- Inner shield highlight for depth -->
+  <path d="M100 48 L142 60 L142 105 Q142 135 100 157 Q58 135 58 105 L58 60 Z" 
+        fill="none" 
+        stroke="white" 
+        stroke-width="1.5"
+        opacity="0.3"/>
+  
+  <!-- Abstract T/Lightning shape (Tuas Power brand) -->
+  <g transform="translate(100, 105)">
+    <!-- Main lightning bolt -->
+    <path d="M-22 -35 L15 -35 L-8 5 L18 5 L-28 50 L-12 12 L-32 12 Z" 
+          fill="white"/>
+    
+    <!-- Layered accent for depth -->
+    <path d="M-15 -28 L10 -28 L-5 0 L13 0 L-20 35 L-9 8 L-23 8 Z" 
+          fill="white" 
+          opacity="0.3"/>
+    
+    <!-- Highlight detail -->
+    <path d="M-10 -25 L5 -25 L-3 -5 L8 -5 L-12 18" 
+          fill="none"
+          stroke="white" 
+          stroke-width="2"
+          opacity="0.6"
+          stroke-linecap="round"/>
+  </g>
+  
+  <!-- Subtle radial glow behind logo -->
+  <circle cx="100" cy="105" r="45" fill="white" opacity="0.08"/>
+  
+  <!-- Corner detail - subtle branding -->
+  <circle cx="165" cy="165" r="3" fill="white" opacity="0.3"/>
+  <circle cx="175" cy="165" r="3" fill="white" opacity="0.3"/>
+  <circle cx="165" cy="175" r="3" fill="white" opacity="0.3"/>
+</svg>

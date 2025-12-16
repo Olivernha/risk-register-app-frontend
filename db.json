@@ -1,568 +1,174 @@
 {
+  "users": [
+    {
+      "userId": "RM001",
+      "name": "Risk Manager",
+      "email": "rm@company.com",
+      "role": "RiskManagement",
+      "department": "Risk Management",
+      "permissions": [
+        "all"
+      ],
+      "active": true
+    },
+    {
+      "userId": "U001",
+      "name": "Michael Wong",
+      "email": "michael.wong@company.com",
+      "role": "User",
+      "department": "Operations",
+      "permissions": [],
+      "active": true
+    },
+    {
+      "userId": "nayha@tuaspower.com.sg",
+      "name": "Oliver Nayha",
+      "email": "nayha@tuaspower.com.sg",
+      "role": "User",
+      "department": "IT",
+      "permissions": [],
+      "active": true
+    },
+    {
+      "userId": "U005",
+      "name": "Sarah Chen",
+      "email": "sarah.chen@company.com",
+      "role": "User",
+      "department": "Finance",
+      "permissions": [],
+      "active": true
+    },
+    {
+      "userId": "U006",
+      "name": "David Lee",
+      "email": "david.lee@company.com",
+      "role": "User",
+      "department": "Engineering",
+      "permissions": [],
+      "active": true
+    }
+  ],
+  "versions": [
+    {
+      "id": "v-2025-q4",
+      "cycle": "2025 Q4",
+      "status": "Active",
+      "startDate": "2025-10-01T00:00:00Z",
+      "endDate": "2025-12-31T23:59:59Z",
+      "createdBy": "RM001",
+      "createdAt": "2025-10-01T00:00:00Z",
+      "statistics": {
+        "totalRisks": 1,
+        "risksByLevel": {
+          "veryHigh": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "ratingCompletionRate": 0,
+        "mitigationCompletionRate": 0
+      }
+    }
+  ],
   "risks": [
     {
       "id": "risk-001",
       "refNo": "R1",
-      "title": "Energy Transition Risk 1",
-      "description": "Risk of stranded assets due to shift towards renewable energy sources. The company faces significant financial exposure as traditional energy infrastructure becomes obsolete faster than anticipated.",
+      "title": "Sample Risk: Cybersecurity Threat",
+      "description": "Risk of data breach or system downtime due to cyber attacks on critical infrastructure.",
       "timeHorizon": "1-3 years",
-      "category": "Strategic",
+      "category": "Financial",
       "financialImpact": {
         "hasImpact": true,
-        "amount": 5000000
+        "amount": 1000000
       },
-      "status": "Locked",
+      "status": "Published",
       "version": "2025 Q4",
       "owners": [
         {
           "userId": "U001",
           "name": "Michael Wong",
           "email": "michael.wong@company.com",
-          "assignedAt": "2025-10-01T00:00:00Z"
+          "assignedAt": "2025-12-16T08:47:00.371Z"
         },
         {
           "userId": "nayha@tuaspower.com.sg",
           "name": "Oliver Nayha",
           "email": "nayha@tuaspower.com.sg",
-          "assignedAt": "2025-12-16T02:56:00Z"
-        }
-      ],
-      "ratings": [
-        {
-          "ownerId": "U001",
-          "currentLikelihood": 4,
-          "currentImpact": 5,
-          "residualLikelihood": 3,
-          "residualImpact": 4,
-          "basisThreadId": "thread-001",
-          "submittedAt": "2025-10-05T00:00:00Z",
-          "updatedAt": "2025-10-10T00:00:00Z",
-          "history": [
-            {
-              "likelihood": 5,
-              "impact": 5,
-              "changedAt": "2025-10-05T00:00:00Z",
-              "reason": "Initial assessment"
-            }
-          ]
-        }
-      ],
-      "averageRating": {
-        "likelihood": 4,
-        "impact": 5,
-        "riskLevel": "Very High",
-        "color": "#E91E63",
-        "residualLikelihood": 3,
-        "residualImpact": 4,
-        "residualRiskLevel": "Medium"
-      },
-      "mitigations": [
-        {
-          "controlId": "mit-001",
-          "title": "Diversify Energy Portfolio",
-          "details": "Invest in renewable energy projects and reduce dependency on fossil fuels",
-          "controlOwner": {
-            "userId": "U005",
-            "name": "Sarah Chen"
-          },
-          "actionOwner": {
-            "userId": "U006",
-            "name": "David Lee"
-          },
-          "status": "Ongoing",
-          "targetDate": "2025-12-31T00:00:00Z",
-          "actualCompletionDate": null,
-          "progressPercentage": 45,
-          "commentsThreadId": "thread-002",
-          "createdAt": "2025-10-01T00:00:00Z",
-          "updatedAt": "2025-10-15T00:00:00Z"
-        }
-      ],
-      "questions": [
-        {
-          "questionId": "q-001",
-          "text": "What is the timeline for phasing out coal-based operations?",
-          "assignedTo": {
-            "userId": "U001",
-            "name": "Michael Wong"
-          },
-          "status": "Answered",
-          "priority": "High",
-          "dueDate": "2025-10-30T00:00:00Z",
-          "threadId": "thread-003",
-          "createdAt": "2025-10-10T00:00:00Z",
-          "createdBy": "RM001",
-          "closedAt": "2025-10-25T00:00:00Z",
-          "closedBy": "RM001"
-        }
-      ],
-      "audit": {
-        "createdBy": "RM001",
-        "createdAt": "2025-10-01T00:00:00Z",
-        "updatedBy": "Current User",
-        "updatedAt": "2025-12-12T07:42:05.584Z",
-        "lockedBy": "Current User",
-        "lockedAt": "2025-12-12T07:42:05.584Z"
-      }
-    },
-    {
-      "id": "risk-002",
-      "refNo": "R2",
-      "title": "Cybersecurity Threats",
-      "description": "Increasing sophistication of cyber attacks targeting critical infrastructure and sensitive data. Risk of data breaches, ransomware attacks, and system disruptions.",
-      "timeHorizon": "< 1 year",
-      "category": "Operational",
-      "financialImpact": {
-        "hasImpact": true,
-        "amount": 2000000
-      },
-      "status": "Published",
-      "version": "2025 Q4",
-      "owners": [
-        {
-          "userId": "U002",
-          "name": "Tan Chok Liang",
-          "email": "tan.chokliang@company.com",
-          "assignedAt": "2025-10-01T00:00:00Z"
-        },
-        {
-          "userId": "nayha@tuaspower.com.sg",
-          "name": "Oliver Nayha",
-          "email": "nayha@tuaspower.com.sg",
-          "assignedAt": "2025-12-16T02:48:00Z"
-        }
-      ],
-      "ratings": [],
-      "averageRating": null,
-      "mitigations": [],
-      "questions": [],
-      "audit": {
-        "createdBy": "RM001",
-        "createdAt": "2025-10-01T00:00:00Z",
-        "updatedBy": "RM001",
-        "updatedAt": "2025-10-01T00:00:00Z",
-        "lockedBy": null,
-        "lockedAt": null
-      }
-    },
-    {
-      "id": "risk-003",
-      "refNo": "R3",
-      "title": "Regulatory Compliance Changes",
-      "description": "Risk of non-compliance with evolving regulatory requirements in multiple jurisdictions, potentially resulting in fines and operational restrictions.",
-      "timeHorizon": "1-3 years",
-      "category": "Compliance",
-      "financialImpact": {
-        "hasImpact": false
-      },
-      "status": "Published",
-      "version": "2025 Q4",
-      "owners": [
-        {
-          "userId": "U003",
-          "name": "Chan Liang",
-          "email": "chan.liang@company.com",
-          "assignedAt": "2025-10-05T00:00:00Z"
-        },
-        {
-          "userId": "nayha@tuaspower.com.sg",
-          "name": "Oliver Nayha",
-          "email": "nayha@tuaspower.com.sg",
-          "assignedAt": "2025-12-16T02:56:00Z"
-        }
-      ],
-      "ratings": [],
-      "averageRating": null,
-      "mitigations": [
-        {
-          "controlId": "mit-1765861886810",
-          "title": "hello world",
-          "details": "<p>test</p>",
-          "controlOwner": {
-            "userId": "RM001",
-            "name": "Risk Manager"
-          },
-          "actionOwner": {
-            "userId": "nayha@tuaspower.com.sg",
-            "name": "Oliver Nayha"
-          },
-          "status": "Ongoing",
-          "targetDate": "2025-12-17T00:00:00.000Z",
-          "progressPercentage": 0,
-          "commentsThreadId": "eL1xPJX",
-          "createdAt": "2025-12-16T05:11:26.843Z",
-          "updatedAt": "2025-12-16T05:11:26.843Z"
-        }
-      ],
-      "questions": [],
-      "audit": {
-        "createdBy": "RM001",
-        "createdAt": "2025-10-05T00:00:00Z",
-        "updatedBy": "Current User",
-        "updatedAt": "2025-12-16T05:11:26.843Z",
-        "lockedBy": null,
-        "lockedAt": null
-      }
-    },
-    {
-      "id": "6f3e",
-      "refNo": "R4",
-      "title": "test 1",
-      "description": "test 1",
-      "timeHorizon": "< 1 year",
-      "category": "Operational",
-      "financialImpact": {
-        "hasImpact": false
-      },
-      "owners": [
-        {
-          "userId": "U001",
-          "name": "Michael Wong",
-          "email": "michael.wong@company.com",
-          "assignedAt": "2025-10-01T00:00:00Z"
-        },
-        {
-          "userId": "nayha@tuaspower.com.sg",
-          "name": "Oliver Nayha",
-          "email": "nayha@tuaspower.com.sg",
-          "assignedAt": "2025-12-16T02:56:00Z"
+          "assignedAt": "2025-12-16T00:00:00Z"
         }
       ],
       "ratings": [
         {
           "ownerId": "nayha@tuaspower.com.sg",
+          "currentLikelihood": 1,
+          "currentImpact": 5,
+          "residualLikelihood": 1,
+          "residualImpact": 1,
+          "basisThreadId": 2,
+          "submittedAt": "2025-12-16T08:40:46.340Z",
+          "updatedAt": "2025-12-16T08:40:46.340Z",
+          "history": []
+        },
+        {
+          "ownerId": "U001",
           "currentLikelihood": 5,
           "currentImpact": 5,
-          "basisThreadId": "3fnMDPL",
-          "submittedAt": "2025-12-16T03:42:34.733Z",
-          "updatedAt": "2025-12-16T03:42:34.733Z",
+          "basisThreadId": 3,
+          "submittedAt": "2025-12-16T09:17:19.345Z",
+          "updatedAt": "2025-12-16T09:17:19.345Z",
           "history": [
             {
-              "likelihood": 1,
-              "impact": 1,
-              "changedAt": "2025-12-16T03:42:34.733Z",
+              "likelihood": 0,
+              "impact": 0,
+              "changedAt": "2025-12-16T09:10:08.410Z",
               "reason": "Updated rating"
+            },
+            {
+              "likelihood": 4,
+              "impact": 4,
+              "changedAt": "2025-12-16T09:17:19.345Z",
+              "reason": "can combine one panel for rating?"
             }
           ]
         }
       ],
+      "mitigations": [
+        {
+          "controlId": "mit-1765874373375",
+          "title": "mitigation 1",
+          "details": "<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>",
+          "controlOwner": {
+            "userId": "RM001",
+            "name": "Risk Manager"
+          },
+          "actionOwner": {
+            "userId": "U006",
+            "name": "David Lee"
+          },
+          "status": "Not Started",
+          "targetDate": "2026-01-01T00:00:00.000Z",
+          "progressPercentage": 0,
+          "commentsThreadId": 1,
+          "createdAt": "2025-12-16T08:39:33.421Z",
+          "updatedAt": "2025-12-16T08:39:33.421Z"
+        }
+      ],
+      "questions": [],
+      "audit": {
+        "createdBy": "RM001",
+        "createdAt": "2025-12-16T00:00:00Z",
+        "updatedBy": "RM001",
+        "updatedAt": "2025-12-16T09:13:52.114Z",
+        "lockedBy": "Current User",
+        "lockedAt": "2025-12-16T08:45:47.130Z"
+      },
       "averageRating": {
-        "likelihood": 5,
+        "likelihood": 3,
         "impact": 5,
         "riskLevel": "Very High",
         "color": "#ef4444"
-      },
-      "mitigations": [],
-      "questions": [],
-      "version": "2025 Q4",
-      "status": "Published",
-      "audit": {
-        "updatedBy": "Current User",
-        "updatedAt": "2025-12-12T07:24:40.527Z"
       }
-    }
-  ],
-  "threads": [
-    {
-      "id": "thread-001",
-      "entityType": "rating_basis",
-      "entityId": "risk-001",
-      "riskRef": "R1",
-      "version": "2025 Q4",
-      "comments": [
-        {
-          "commentId": "comment-001",
-          "userId": "U001",
-          "userName": "Michael Wong",
-          "userRole": "RiskOwner",
-          "message": "Based on recent market analysis, the transition to renewable energy is accelerating faster than our initial projections. Government policies and investor sentiment are driving this shift.",
-          "timestamp": "2025-10-05T10:00:00Z",
-          "edited": false,
-          "mentions": []
-        },
-        {
-          "commentId": "comment-002",
-          "userId": "RM001",
-          "userName": "Risk Manager",
-          "userRole": "RiskManagement",
-          "message": "Thank you for the detailed assessment. Please provide updated projections by end of month.",
-          "timestamp": "2025-10-06T14:30:00Z",
-          "edited": false,
-          "mentions": [
-            "U001"
-          ]
-        }
-      ],
-      "createdAt": "2025-10-05T10:00:00Z",
-      "lastCommentAt": "2025-10-06T14:30:00Z"
-    },
-    {
-      "id": "thread-002",
-      "entityType": "mitigation_progress",
-      "entityId": "mit-001",
-      "riskRef": "R1",
-      "version": "2025 Q4",
-      "comments": [
-        {
-          "commentId": "comment-003",
-          "userId": "U006",
-          "userName": "David Lee",
-          "userRole": "ActionOwner",
-          "message": "Progress update: We have completed 45% of the renewable energy portfolio diversification. Two solar projects are in final approval stage.",
-          "timestamp": "2025-10-15T09:00:00Z",
-          "edited": false,
-          "mentions": []
-        }
-      ],
-      "createdAt": "2025-10-15T09:00:00Z",
-      "lastCommentAt": "2025-10-15T09:00:00Z"
-    },
-    {
-      "id": "thread-003",
-      "entityType": "question_reply",
-      "entityId": "q-001",
-      "riskRef": "R1",
-      "version": "2025 Q4",
-      "comments": [
-        {
-          "commentId": "comment-004",
-          "userId": "U001",
-          "userName": "Michael Wong",
-          "userRole": "RiskOwner",
-          "message": "The coal phase-out timeline is planned for 2027-2030, with gradual reduction starting in 2026. Detailed roadmap will be shared in Q1 2026.",
-          "timestamp": "2025-10-20T11:00:00Z",
-          "edited": false,
-          "mentions": []
-        }
-      ],
-      "createdAt": "2025-10-20T11:00:00Z",
-      "lastCommentAt": "2025-10-20T11:00:00Z"
-    },
-    {
-      "entityType": "rating_basis",
-      "entityId": "6f3e-nayha@tuaspower.com.sg",
-      "riskRef": "R4",
-      "version": "2025 Q4",
-      "comments": [
-        {
-          "commentId": "comment-1765859785736",
-          "userId": "nayha@tuaspower.com.sg",
-          "userName": "Nay Htet Aung",
-          "userRole": "RiskOwner",
-          "message": "<p>test</p>",
-          "timestamp": "2025-12-16T04:36:25.736Z",
-          "edited": false,
-          "mentions": []
-        },
-        {
-          "commentId": "comment-1765859869080",
-          "userId": "nayha@tuaspower.com.sg",
-          "userName": "Nay Htet Aung",
-          "userRole": "RiskOwner",
-          "message": "<p>@Nay Htet Aung test</p>",
-          "timestamp": "2025-12-16T04:37:49.080Z",
-          "edited": false,
-          "mentions": [],
-          "parentId": "comment-1765859785736"
-        },
-        {
-          "commentId": "comment-1765859874170",
-          "userId": "nayha@tuaspower.com.sg",
-          "userName": "Nay Htet Aung",
-          "userRole": "RiskOwner",
-          "message": "<p>@Nay Htet Aung ok</p>",
-          "timestamp": "2025-12-16T04:37:54.170Z",
-          "edited": false,
-          "mentions": [],
-          "parentId": "comment-1765859785736"
-        },
-        {
-          "commentId": "comment-1765859879401",
-          "userId": "nayha@tuaspower.com.sg",
-          "userName": "Nay Htet Aung",
-          "userRole": "RiskOwner",
-          "message": "<p>@Nay Htet Aung test</p>",
-          "timestamp": "2025-12-16T04:37:59.401Z",
-          "edited": false,
-          "mentions": [],
-          "parentId": "comment-1765859869080"
-        }
-      ],
-      "createdAt": "2025-12-16T04:19:11.459Z",
-      "lastCommentAt": "2025-12-16T04:37:59.401Z",
-      "id": "3fnMDPL"
-    },
-    {
-      "entityType": "mitigation_progress",
-      "entityId": "mit-1765861886810",
-      "riskRef": "R3",
-      "version": "2025 Q4",
-      "comments": [],
-      "createdAt": "2025-12-16T05:11:26.810Z",
-      "lastCommentAt": "2025-12-16T05:11:26.810Z",
-      "id": "eL1xPJX"
-    }
-  ],
-  "users": [
-    {
-      "id": "user-001",
-      "userId": "U001",
-      "name": "Michael Wong",
-      "email": "michael.wong@company.com",
-      "role": "RiskOwner",
-      "department": "Finance",
-      "permissions": [
-        {
-          "resource": "risks",
-          "actions": [
-            "read"
-          ]
-        },
-        {
-          "resource": "ratings",
-          "actions": [
-            "create",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-002",
-      "userId": "U002",
-      "name": "Tan Chok Liang",
-      "email": "tan.chokliang@company.com",
-      "role": "RiskOwner",
-      "department": "IT",
-      "permissions": [
-        {
-          "resource": "risks",
-          "actions": [
-            "read"
-          ]
-        },
-        {
-          "resource": "ratings",
-          "actions": [
-            "create",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-003",
-      "userId": "U003",
-      "name": "Chan Liang",
-      "email": "chan.liang@company.com",
-      "role": "RiskOwner",
-      "department": "Legal",
-      "permissions": [
-        {
-          "resource": "risks",
-          "actions": [
-            "read"
-          ]
-        },
-        {
-          "resource": "ratings",
-          "actions": [
-            "create",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-004",
-      "userId": "RM001",
-      "name": "Risk Manager",
-      "email": "risk.manager@company.com",
-      "role": "RiskManagement",
-      "department": "Risk Management",
-      "permissions": [
-        {
-          "resource": "risks",
-          "actions": [
-            "create",
-            "read",
-            "update",
-            "delete"
-          ]
-        },
-        {
-          "resource": "versions",
-          "actions": [
-            "create",
-            "read",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-005",
-      "userId": "U005",
-      "name": "Sarah Chen",
-      "email": "sarah.chen@company.com",
-      "role": "ActionOwner",
-      "department": "Operations",
-      "permissions": [
-        {
-          "resource": "mitigations",
-          "actions": [
-            "read",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-006",
-      "userId": "U006",
-      "name": "David Lee",
-      "email": "david.lee@company.com",
-      "role": "ActionOwner",
-      "department": "Operations",
-      "permissions": [
-        {
-          "resource": "mitigations",
-          "actions": [
-            "read",
-            "update"
-          ]
-        }
-      ],
-      "active": true
-    },
-    {
-      "id": "user-007",
-      "userId": "nayha@tuaspower.com.sg",
-      "name": "Oliver Nayha",
-      "email": "nayha@tuaspower.com.sg",
-      "role": "RiskOwner",
-      "department": "Engineering",
-      "permissions": [
-        {
-          "resource": "risks",
-          "actions": [
-            "read"
-          ]
-        },
-        {
-          "resource": "ratings",
-          "actions": [
-            "create",
-            "update"
-          ]
-        }
-      ],
-      "active": true
     }
   ],
   "heatmap": [
@@ -619,8 +225,8 @@
       "id": "heatmap-2-3",
       "likelihood": 2,
       "impact": 3,
-      "riskLevel": "Low",
-      "color": "#22c55e"
+      "riskLevel": "Medium",
+      "color": "#eab308"
     },
     {
       "id": "heatmap-2-4",
@@ -633,8 +239,8 @@
       "id": "heatmap-2-5",
       "likelihood": 2,
       "impact": 5,
-      "riskLevel": "Medium",
-      "color": "#eab308"
+      "riskLevel": "High",
+      "color": "#f97316"
     },
     {
       "id": "heatmap-3-1",
@@ -647,8 +253,8 @@
       "id": "heatmap-3-2",
       "likelihood": 3,
       "impact": 2,
-      "riskLevel": "Low",
-      "color": "#22c55e"
+      "riskLevel": "Medium",
+      "color": "#eab308"
     },
     {
       "id": "heatmap-3-3",
@@ -661,8 +267,8 @@
       "id": "heatmap-3-4",
       "likelihood": 3,
       "impact": 4,
-      "riskLevel": "Medium",
-      "color": "#eab308"
+      "riskLevel": "High",
+      "color": "#f97316"
     },
     {
       "id": "heatmap-3-5",
@@ -675,8 +281,8 @@
       "id": "heatmap-4-1",
       "likelihood": 4,
       "impact": 1,
-      "riskLevel": "Low",
-      "color": "#22c55e"
+      "riskLevel": "Medium",
+      "color": "#eab308"
     },
     {
       "id": "heatmap-4-2",
@@ -689,8 +295,8 @@
       "id": "heatmap-4-3",
       "likelihood": 4,
       "impact": 3,
-      "riskLevel": "Medium",
-      "color": "#eab308"
+      "riskLevel": "High",
+      "color": "#f97316"
     },
     {
       "id": "heatmap-4-4",
@@ -717,8 +323,8 @@
       "id": "heatmap-5-2",
       "likelihood": 5,
       "impact": 2,
-      "riskLevel": "Medium",
-      "color": "#eab308"
+      "riskLevel": "High",
+      "color": "#f97316"
     },
     {
       "id": "heatmap-5-3",
@@ -742,58 +348,111 @@
       "color": "#E91E63"
     }
   ],
-  "versions": [
+  "threads": [
     {
-      "id": "version-001",
-      "cycle": "2025 Q4",
-      "status": "Active",
-      "startDate": "2025-10-01T00:00:00Z",
-      "endDate": "2025-12-31T23:59:59Z",
-      "createdBy": "RM001",
-      "createdAt": "2025-10-01T00:00:00Z",
-      "lockedBy": null,
-      "lockedAt": null,
-      "snapshotIds": [],
-      "statistics": {
-        "totalRisks": 3,
-        "risksByLevel": {
-          "veryHigh": 1,
-          "high": 0,
-          "medium": 0,
-          "low": 0
-        },
-        "ratingCompletionRate": 33,
-        "mitigationCompletionRate": 33
-      }
+      "entityType": "mitigation_progress",
+      "entityId": "mit-1765874373375",
+      "riskRef": "R1",
+      "version": "2025 Q4",
+      "comments": [],
+      "createdAt": "2025-12-16T08:39:33.375Z",
+      "lastCommentAt": "2025-12-16T08:39:33.375Z",
+      "id": 1
     },
     {
-      "id": "version-002",
-      "cycle": "2025 Q3",
-      "status": "Locked",
-      "startDate": "2025-07-01T00:00:00Z",
-      "endDate": "2025-09-30T23:59:59Z",
-      "createdBy": "RM001",
-      "createdAt": "2025-07-01T00:00:00Z",
-      "lockedBy": "RM001",
-      "lockedAt": "2025-09-30T23:59:59Z",
-      "snapshotIds": [
-        "snapshot-001"
+      "entityType": "rating_basis",
+      "entityId": "risk-001-nayha@tuaspower.com.sg",
+      "riskRef": "R1",
+      "version": "2025 Q4",
+      "comments": [
+        {
+          "commentId": "comment-1765874446306",
+          "userId": "nayha@tuaspower.com.sg",
+          "userName": "Oliver Nayha",
+          "userRole": "User",
+          "message": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
+          "timestamp": "2025-12-16T08:40:46.306Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765874651699",
+          "userId": "RM001",
+          "userName": "Risk Manager",
+          "userRole": "RiskManagement",
+          "message": "<p>@Oliver Nayha ok i got it</p><p></p>",
+          "timestamp": "2025-12-16T08:44:11.699Z",
+          "edited": false,
+          "mentions": [
+            "nayha@tuaspower.com.sg"
+          ],
+          "parentId": "comment-1765874446306"
+        }
       ],
-      "statistics": {
-        "totalRisks": 29,
-        "risksByLevel": {
-          "veryHigh": 5,
-          "high": 12,
-          "medium": 10,
-          "low": 2
-        },
-        "ratingCompletionRate": 95,
-        "mitigationCompletionRate": 68
-      }
+      "createdAt": "2025-12-16T08:40:46.209Z",
+      "lastCommentAt": "2025-12-16T08:44:11.699Z",
+      "id": 2
     },
     {
-      "cycle": "2026 Q1",
-      "id": "B8xSaoV"
+      "entityType": "rating_basis",
+      "entityId": "risk-001-U001",
+      "riskRef": "R1",
+      "version": "2025 Q4",
+      "comments": [
+        {
+          "commentId": "comment-1765875186793",
+          "userId": "U001",
+          "userName": "Michael Wong",
+          "userRole": "User",
+          "message": "Singapore Pools updates Toto results continuously, and Thursday’s draw will be independent of all past outcomes in a properly run game.​\nAny set of 6 numbers from 1–49 has the same probability \n1\n/\n(\n49\n6\n)\n1/( \n6\n49\n ), so “model picks” are just structured guesses derived from history, not genuine predictions.​\n\nDefine a concrete strategy",
+          "timestamp": "2025-12-16T08:53:06.793Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765875260119",
+          "userId": "U001",
+          "userName": "Michael Wong",
+          "userRole": "User",
+          "message": "Singapore Pools updates Toto results continuously, and Thursday’s draw will be independent of all past outcomes in a properly run game.​\nAny set of 6 numbers from 1–49 has the same probability \n1\n/\n(\n49\n6\n)\n1/( \n6\n49\n ), so “model picks” are just structured guesses derived from history, not genuine predictions.​\n\nDefine a concrete strategy",
+          "timestamp": "2025-12-16T08:54:20.119Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765875630941",
+          "userId": "U001",
+          "userName": "Michael Wong",
+          "userRole": "User",
+          "message": "This will output concrete 6-number boards you can use on Thursday, but remember these are still random within your chosen structure and have the same jackpot odds as any other combination.",
+          "timestamp": "2025-12-16T09:00:30.941Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765875657363",
+          "userId": "U001",
+          "userName": "Michael Wong",
+          "userRole": "User",
+          "message": "This will output concrete 6-number boards you can use on Thursday, but remember these are still random within your chosen structure and have the same jackpot odds as any other combination.",
+          "timestamp": "2025-12-16T09:00:57.363Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1765876639310",
+          "userId": "U001",
+          "userName": "Michael Wong",
+          "userRole": "User",
+          "message": "can combine one panel for rating?",
+          "timestamp": "2025-12-16T09:17:19.310Z",
+          "edited": false,
+          "mentions": []
+        }
+      ],
+      "createdAt": "2025-12-16T08:53:06.702Z",
+      "lastCommentAt": "2025-12-16T09:17:19.310Z",
+      "id": 3
     }
   ]
 }

@@ -13,7 +13,7 @@
         Cancel
       </button>
     </div>
-?:
+
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center py-12">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
@@ -284,13 +284,15 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useNotifications } from '@/composables/useNotifications'
+import { useConfirmStore } from '@/stores/confirm'
 import riskService, { type UpdateRiskRequest } from '@/api/risks'
-import userService from '@/api/users'
-import type { Risk, User, TimeHorizon, RiskCategory, RiskOwner } from '@/types'
+import userService from '@/api/users'   
+import type { Risk, User, TimeHorizon, RiskCategory } from '@/types'
 
 const router = useRouter()
 const route = useRoute()
 const { showSuccess, showError } = useNotifications()
+const confirmStore = useConfirmStore()
 
 const riskId = computed(() => route.params.id as string)
 const risk = ref<Risk | null>(null)
@@ -382,7 +384,10 @@ async function loadRisk() {
 
 async function loadRiskOwners() {
   try {
-    riskOwners.value = await userService.getUsersByRole('RiskOwner')
+    // Fetch all users to populate the list
+    const allUsers = await userService.getUsers()
+    // Filter active users. Allow 'User', 'RiskOwner', 'RiskManagement' to be assigned.
+    riskOwners.value = allUsers.filter(u => u.active !== false)
   } catch (err) {
     console.error('Failed to fetch risk owners:', err)
   }
@@ -457,7 +462,13 @@ async function handleSubmit() {
   // Confirm if owners are being removed
   if (removedOwners.value.length > 0) {
     const ownerNames = removedOwners.value.map(o => o.name).join(', ')
-    if (!confirm(`Are you sure you want to remove the following owners: ${ownerNames}? Their ratings will be marked inactive but retained for audit.`)) {
+    const confirmed = await confirmStore.ask({
+        title: 'Confirm Owner Removal',
+        message: `Are you sure you want to remove the following owners: ${ownerNames}? Their ratings will be marked inactive but retained for audit.`,
+        type: 'warning'
+    })
+
+    if (!confirmed) {
       return
     }
   }

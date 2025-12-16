@@ -248,8 +248,8 @@ const getOwnerDepartment = (userId: string) => {
 
 const getMitigationProgress = (risk: Risk) => {
     if (!risk.mitigations || risk.mitigations.length === 0) return 0
-    const completed = risk.mitigations.filter((m: any) => m.status === 'Completed').length
-    return Math.round((completed / risk.mitigations.length) * 100)
+    const totalProgress = risk.mitigations.reduce((sum, m) => sum + (m.progressPercentage || 0), 0)
+    return Math.round(totalProgress / risk.mitigations.length)
 }
 
 // Access Control & Filtering

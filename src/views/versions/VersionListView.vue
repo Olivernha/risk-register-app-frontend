@@ -188,16 +188,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useVersionStore } from '@/stores/version'
+import { useConfirmStore } from '@/stores/confirm'
 import versionService from '@/api/versions'
 import riskService from '@/api/risks'
-import type { Version } from '@/types'
+import type { Version, RiskStatus } from '@/types'
 
-const router = useRouter()
 const authStore = useAuthStore()
 const versionStore = useVersionStore()
+const confirmStore = useConfirmStore()
 
 const { versions, loading, activeVersion } = versionStore
 const showCreateDialog = ref(false)
@@ -243,10 +243,14 @@ async function handleCreateVersion() {
   }
 
   // Validation: Check for active version
-  if (activeVersion && !confirm(
-    `Warning: Version "${activeVersion.cycle}" is still active. Creating a new version will make it the active one. Continue?`
-  )) {
-    return
+  // Validation: Check for active version
+  if (activeVersion) {
+    const confirmed = await confirmStore.ask({
+        title: 'Create New Version',
+        message: `Warning: Version "${activeVersion.cycle}" is still active. Creating a new version will make it the active one. Continue?`,
+        type: 'warning'
+    })
+    if (!confirmed) return
   }
 
   creating.value = true
@@ -260,31 +264,7 @@ async function handleCreateVersion() {
       return
     }
 
-    const year = parseInt(match[1])
-    const quarter = parseInt(match[2])
-
-    // Calculate quarter dates
-    const startMonth = (quarter - 1) * 3
-    const startDate = new Date(year, startMonth, 1)
-    const endDate = new Date(year, startMonth + 3, 0)
-
     // Create version via API
-    const versionData = {
-      cycle: newVersion.value.cycle,
-      status: 'Active',
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      createdBy: authStore.user?.name || 'Current User',
-      createdAt: new Date().toISOString(),
-      snapshotIds: [],
-      statistics: {
-        totalRisks: 0,
-        risksByLevel: { veryHigh: 0, high: 0, medium: 0, low: 0 },
-        ratingCompletionRate: 0,
-        mitigationCompletionRate: 0
-      }
-    }
-
     const createdVersion = await versionService.createVersion({
       cycle: newVersion.value.cycle,
       copyFromVersionId: newVersion.value.copyFromVersionId || undefined
@@ -298,7 +278,7 @@ async function handleCreateVersion() {
     // Refresh versions list
     await versionStore.fetchVersions()
 
-    alert(`Version "${newVersion.value.cycle}" created successfully!`)
+    confirmStore.alert('Success', `Version "${newVersion.value.cycle}" created successfully!`)
     closeCreateDialog()
   } catch (e: any) {
     validationError.value = e.message || 'Failed to create version'
@@ -321,7 +301,8 @@ async function copyRisksFromVersion(sourceVersionId: string, targetVersionId: st
         ...risk,
         id: undefined, // Let backend generate new ID
         version: targetVersionId,
-        status: 'Draft',
+        status: 'Draft' as RiskStatus,
+        owners: risk.owners.map((o: any) => o.userId), // Map owners to IDs
         ratings: [], // Clear ratings for new cycle
         questions: [], // Fresh start for questions
         mitigations: risk.mitigations.map((m: any) => ({

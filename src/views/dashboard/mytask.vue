@@ -57,17 +57,14 @@
     <div class="space-y-8">
       
       <!-- Section: Risk Owner Tasks -->
-      <div v-if="authStore.hasRole(['RiskOwner'])" class="space-y-6">
+      <div v-if="pendingRatings.length > 0 || myQuestions.length > 0" class="space-y-6">
         <!-- Risks Awaiting Rating -->
-        <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div v-if="pendingRatings.length > 0" class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-blue-50 dark:bg-blue-900/10">
             <h3 class="font-semibold text-blue-900 dark:text-blue-100">Risks Awaiting My Rating</h3>
             <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded-full">{{ pendingRatings.length }} pending</span>
           </div>
-          <div v-if="pendingRatings.length === 0" class="p-8 text-center text-gray-500 dark:text-gray-400">
-            No pending ratings. Good job!
-          </div>
-          <table v-else class="w-full">
+          <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
               <tr>
                 <th class="px-6 py-3">Risk Ref</th>
@@ -82,7 +79,7 @@
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ risk.title }}</td>
                 <td class="px-6 py-4 text-sm text-red-600 dark:text-red-400 font-medium">Internal Deadline: TBD</td>
                 <td class="px-6 py-4 text-right">
-                  <button @click="$router.push(`/risks/${risk.id}`)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium">
+                  <button @click="$router.push(`/risks/${risk.id}/rate`)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium">
                     Rate Now →
                   </button>
                 </td>
@@ -92,15 +89,12 @@
         </div>
 
         <!-- My Questions -->
-        <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div v-if="myQuestions.length > 0" class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-purple-50 dark:bg-purple-900/10">
             <h3 class="font-semibold text-purple-900 dark:text-purple-100">Questions Assigned to Me</h3>
             <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs px-2 py-1 rounded-full">{{ myQuestions.length }} open</span>
           </div>
-          <div v-if="myQuestions.length === 0" class="p-8 text-center text-gray-500 dark:text-gray-400">
-            No open questions assigned to you.
-          </div>
-          <table v-else class="w-full">
+          <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
               <tr>
                 <th class="px-6 py-3">Related Risk</th>
@@ -130,16 +124,13 @@
       </div>
 
       <!-- Section: Action Owner Tasks -->
-      <div v-if="authStore.hasRole(['ActionOwner'])" class="space-y-6">
+      <div v-if="myMitigations.length > 0" class="space-y-6">
         <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-green-50 dark:bg-green-900/10">
             <h3 class="font-semibold text-green-900 dark:text-green-100">My Action Items</h3>
             <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded-full">{{ myMitigations.length }} active</span>
           </div>
-           <div v-if="myMitigations.length === 0" class="p-8 text-center text-gray-500 dark:text-gray-400">
-            No ongoing mitigations assigned to you.
-          </div>
-          <table v-else class="w-full">
+          <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
               <tr>
                 <th class="px-6 py-3">Related Risk</th>
@@ -167,7 +158,7 @@
                     <span class="text-xs text-gray-500">{{ item.mitigation.progressPercentage }}%</span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <button @click="$router.push(`/risks/${item.riskId}?tab=mitigations`)" class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 text-sm font-medium">
+                  <button @click="$router.push('/my-actions')" class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 text-sm font-medium">
                     Update →
                   </button>
                 </td>
@@ -210,6 +201,17 @@
           </table>
         </div>
       </div>
+
+      <!-- Empty State for Users with No Assignments -->
+      <div v-if="!authStore.hasRole(['RiskManagement', 'Admin']) && pendingRatings.length === 0 && myQuestions.length === 0 && myMitigations.length === 0" class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
+        <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Tasks Assigned</h3>
+        <p class="text-gray-500 dark:text-gray-400">
+          You don't have any pending tasks at the moment. Tasks will appear here when you're assigned as a Risk Owner or Action Owner.
+        </p>
+      </div>
     
     </div>
   </div>
@@ -228,10 +230,6 @@ const { risks } = storeToRefs(riskStore)
 
 onMounted(async () => {
   await riskStore.fetchRisks()
-  // Ensure we have current user profile loaded?
-  if (!authStore.user) {
-      await authStore.fetchUserProfile() // Or simpler init
-  }
 })
 
 // Current User ID for filtering
@@ -275,7 +273,8 @@ const myMitigations = computed(() => {
     const list: { riskId: string, riskRef: string, mitigation: Mitigation }[] = []
 
     risks.value.forEach((risk: Risk) => {
-        const assignedMs = risk.mitigations.filter((m: Mitigation) => m.actionOwner.userId === currentUserId.value && m.status !== 'Completed')
+        // Show ALL assigned mitigations, including completed ones
+        const assignedMs = risk.mitigations.filter((m: Mitigation) => m.actionOwner.userId === currentUserId.value)
         assignedMs.forEach((m: Mitigation) => {
             list.push({ riskId: risk.id, riskRef: risk.refNo, mitigation: m })
         })
@@ -288,17 +287,34 @@ const draftRisks = computed(() => {
     return risks.value.filter((r: Risk) => r.status === 'Draft')
 })
 
+// 5. My Assigned Risks (where I'm a Risk Owner)
+const myAssignedRisks = computed(() => {
+    if (!currentUserId.value) return []
+    return risks.value.filter((risk: Risk) => {
+        return risk.owners.some((o: RiskOwner) => o.userId === currentUserId.value)
+    })
+})
+
 
 // --- Stats for Top Cards ---
 const dashboardStats = computed(() => {
     const stats = []
     
-    if (authStore.hasRole(['RiskOwner'])) {
+    // Show stats based on actual assignments, not roles
+    const hasPendingRatings = pendingRatings.value.length > 0
+    const hasQuestions = myQuestions.value.length > 0
+    const hasMitigations = myMitigations.value.length > 0
+    const hasAssignedRisks = myAssignedRisks.value.length > 0
+    
+    if (hasPendingRatings) {
         stats.push({ label: 'Pending Ratings', value: pendingRatings.value.length, description: 'Risks awaiting your assessment' })
+    }
+    
+    if (hasQuestions) {
         stats.push({ label: 'Open Questions', value: myQuestions.value.length, description: 'Queries requiring your response' })
     }
     
-    if (authStore.hasRole(['ActionOwner'])) {
+    if (hasMitigations) {
         stats.push({ label: 'Active Mitigations', value: myMitigations.value.length, description: 'Action items in progress' })
         const overdue = myMitigations.value.filter((i: any) => new Date(i.mitigation.targetDate) < new Date()).length
         stats.push({ label: 'Overdue Items', value: overdue, description: 'Actions past target date' })
@@ -307,6 +323,18 @@ const dashboardStats = computed(() => {
     if (authStore.hasRole(['RiskManagement', 'Admin'])) {
          stats.push({ label: 'Total Risks', value: risks.value.length, description: 'All registered risks' })
          stats.push({ label: 'Draft Risks', value: draftRisks.value.length, description: 'Pending publication' })
+    }
+    
+    // For regular users, show their assigned risks count
+    if (!authStore.hasRole(['RiskManagement', 'Admin'])) {
+        if (hasAssignedRisks) {
+            stats.push({ label: 'My Risks', value: myAssignedRisks.value.length, description: 'Risks assigned to you' })
+        }
+        
+        // If no stats at all, show a friendly message
+        if (stats.length === 0) {
+            stats.push({ label: 'Your Tasks', value: 0, description: 'No tasks assigned yet' })
+        }
     }
     
     return stats
@@ -321,11 +349,15 @@ const isOverdue = (date: Date | string) => {
     return new Date(date) < new Date()
 }
 
+import { useConfirmStore } from '@/stores/confirm'
+
+const confirmStore = useConfirmStore()
+
 const exportDashboard = () => {
-    alert('Exporting dashboard data to Excel/CSV...')
+    confirmStore.alert('Export', 'Exporting dashboard data to Excel/CSV...')
 }
 
 const toggleDigest = () => {
-    alert('Email digest preferences updated.')
+    confirmStore.alert('Digest', 'Email digest preferences updated.')
 }
 </script>

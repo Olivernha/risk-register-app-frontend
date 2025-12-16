@@ -136,6 +136,7 @@ import threadService from '@/api/threads'
 import userService from '@/api/users'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifications } from '@/composables/useNotifications'
+import { useConfirmStore } from '@/stores/confirm'
 import type { Thread, Comment, Rating, RiskOwner, User } from '@/types'
 
 
@@ -159,6 +160,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const authStore = useAuthStore()
 const { showSuccess, showError } = useNotifications()
+const confirmStore = useConfirmStore()
 
 const thread = ref<Thread | null>(null)
 const users = ref<User[]>([])
@@ -425,7 +427,13 @@ async function handleThreadReply(data: { parentId: string, message: string, ment
 async function handleDeleteComment(commentId: string) {
   if (!props.threadId || !authStore.user) return
 
-  if (!confirm('Are you sure you want to delete this comment?')) {
+  const confirmed = await confirmStore.ask({
+    title: 'Delete Comment',
+    message: 'Are you sure you want to delete this comment?',
+    type: 'warning'
+  })
+
+  if (!confirmed) {
     return
   }
 

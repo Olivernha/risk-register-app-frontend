@@ -120,19 +120,42 @@
           </div>
 
           <!-- Rating Basis Threads -->
-          <div v-if="risk.ratings && risk.ratings.length > 0" class="space-y-6">
-            <BasisThread
-              v-for="rating in risk.ratings"
-              :key="rating.ownerId"
-              :thread-id="rating.basisThreadId || null"
-              :rating="rating"
-              :owner="risk.owners.find((o: any) => o.userId === rating.ownerId) || null"
-              :risk-id="risk.id"
-              :risk-ref="risk.refNo"
-              :version="risk.version"
-              :is-locked="risk.status === 'Locked'"
-              @update-thread-id="(newId) => handleThreadIdUpdate(rating.ownerId, newId)"
-            />
+          <div v-if="risk.ratings && risk.ratings.length > 0" class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Rating Discussions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div 
+                v-for="rating in risk.ratings" 
+                :key="rating.ownerId"
+                class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+              >
+                  <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-medium">
+                          {{ risk.owners.find(o => o.userId === rating.ownerId)?.name?.substring(0, 2).toUpperCase() }}
+                        </div>
+                        <span class="font-medium text-gray-900 dark:text-gray-100 text-sm">
+                            {{ risk.owners.find(o => o.userId === rating.ownerId)?.name }}
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-500">{{ formatDate(rating.updatedAt) }}</span>
+                  </div>
+                  <div class="flex items-center justify-between mb-4">
+                      <span class="text-sm text-gray-600 dark:text-gray-400">Current Rating</span>
+                      <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs font-semibold">
+                          {{ rating.currentLikelihood }} x {{ rating.currentImpact }}
+                      </span>
+                  </div>
+                  <button 
+                    @click="openDiscussion(rating)"
+                    class="w-full flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1 9.77 9.77 0 01-6-6m12-2v3m0 4v.01" />
+                    </svg>
+                    View Discussion
+                  </button>
+              </div>
+            </div>
           </div>
 
           <!-- Mitigation Measures -->
@@ -272,7 +295,6 @@
       </div>
     </template>
 
-    <!-- Create Mitigation Modal -->
     <CreateMitigationModal
       :is-open="showCreateMitigationModal"
       :risk-id="risk?.id || ''"
@@ -280,6 +302,26 @@
       @close="showCreateMitigationModal = false"
       @created="handleMitigationCreated"
     />
+
+    <Modal
+      :is-open="showDiscussionModal"
+      size="6xl"
+      :title="selectedRatingOwner ? `Basis Discussion: ${selectedRatingOwner.name}` : 'Basis Discussion'"
+      @close="showDiscussionModal = false"
+    >
+      <div v-if="selectedRating && risk" class="max-h-[60vh] overflow-y-auto pr-2">
+        <BasisThread
+          :thread-id="selectedRating.basisThreadId || null"
+          :rating="selectedRating"
+          :owner="selectedRatingOwner"
+          :risk-id="risk.id"
+          :risk-ref="risk.refNo"
+          :version="risk.version"
+          :is-locked="risk.status === 'Locked'"
+          @update-thread-id="(newId) => handleThreadIdUpdate(selectedRating!.ownerId, newId)"
+        />
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -288,16 +330,31 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
+import { useConfirmStore } from '@/stores/confirm'
 import BasisThread from '@/components/risks/BasisThread.vue'
 import CreateMitigationModal from '@/components/mitigations/CreateMitigationModal.vue'
-import type { RiskLevel, MitigationStatus } from '@/types'
+import Modal from '@/components/common/Modal.vue'
+import type { RiskLevel, MitigationStatus, Rating } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const riskStore = useRiskStore()
+const confirmStore = useConfirmStore()
 
 const showCreateMitigationModal = ref(false)
+const showDiscussionModal = ref(false)
+const selectedRating = ref<Rating | null>(null)
+
+const selectedRatingOwner = computed(() => {
+    if (!risk.value || !selectedRating.value) return null
+    return risk.value.owners.find((o: any) => o.userId === selectedRating.value!.ownerId) || null
+})
+
+function openDiscussion(rating: Rating) {
+    selectedRating.value = rating
+    showDiscussionModal.value = true
+}
 
 const risk = computed(() => {
   const id = route.params.id as string
@@ -360,16 +417,21 @@ const canAddMitigation = computed(() => {
 async function handlePublish() {
   if (!risk.value) return
   
-  if (!confirm('Are you sure you want to publish this risk? It will be visible to all assigned owners for rating.')) {
+  const confirmed = await confirmStore.ask({
+    title: 'Publish Risk',
+    message: 'Are you sure you want to publish this risk? It will be visible to all assigned owners for rating.'
+  })
+  
+  if (!confirmed) {
     return
   }
 
   try {
     await riskStore.publishRisk(risk.value.id)
-    alert('Risk published successfully!')
+    confirmStore.alert('Success', 'Risk published successfully!')
     // No need to reload, store is reactive
   } catch (e: any) {
-    alert(e.message)
+    confirmStore.alert('Error', e.message)
   }
 }
 
@@ -379,16 +441,16 @@ async function handleDelete() {
   const reason = prompt('Please enter a reason for deleting this risk:')
   if (reason === null) return // user cancelled
   if (!reason.trim()) {
-    alert('Deletion reason is required.')
+    confirmStore.alert('Required', 'Deletion reason is required.')
     return
   }
 
   try {
     await riskStore.deleteRisk(risk.value.id, reason)
-    alert('Risk deleted successfully.')
+    await confirmStore.alert('Success', 'Risk deleted successfully.')
     router.push('/risks')
   } catch (e: any) {
-    alert(e.message)
+    confirmStore.alert('Error', e.message)
   }
 }
 
@@ -398,26 +460,28 @@ async function handleLock() {
   try {
     // First attempt without override
     await riskStore.lockRisk(risk.value.id, false)
-    alert('Risk locked successfully!')
+    confirmStore.alert('Success', 'Risk locked successfully!')
   } catch (e: any) {
     // Check if error is due to incomplete ratings
     if (e.message.startsWith('INCOMPLETE_RATINGS:')) {
       const pendingOwners = e.message.substring('INCOMPLETE_RATINGS:'.length)
-      const confirmOverride = confirm(
-        `Warning: The following owners have not submitted ratings:\n\n${pendingOwners}\n\n` +
-        `Do you want to lock this risk anyway?`
-      )
+      const confirmOverride = await confirmStore.ask({
+        title: 'Confirm Override',
+        message: `Warning: The following owners have not submitted ratings:\n\n${pendingOwners}\n\nDo you want to lock this risk anyway?`,
+        confirmText: 'Lock Anyway',
+        type: 'warning'
+      })
       
       if (confirmOverride) {
         try {
           await riskStore.lockRisk(risk.value.id, true)
-          alert('Risk locked successfully (with incomplete ratings).')
+          confirmStore.alert('Success', 'Risk locked successfully (with incomplete ratings).')
         } catch (overrideError: any) {
-          alert(overrideError.message)
+          confirmStore.alert('Error', overrideError.message)
         }
       }
     } else {
-      alert(e.message)
+      confirmStore.alert('Error', e.message)
     }
   }
 }

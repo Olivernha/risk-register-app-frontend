@@ -19,9 +19,7 @@
         <div class="mb-12 slide-in-left">
           <div class="flex items-center gap-4 mb-6">
             <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/50">
-              <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+              <img src="@/assets/img/icon.svg" alt="Logo" class="w-full h-full"></img>
             </div>
             <div>
               <h1 class="text-4xl font-bold text-white">Risk Register</h1>
@@ -105,28 +103,63 @@
             <p class="text-slate-400">Sign in to access your risk management dashboard</p>
           </div>
 
-          <!-- Sign in button -->
-          <button 
-            @click="handleMicrosoftLogin"
-            :disabled="loading"
-            class="w-full group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-3"
-          >
-            <!-- Shimmer effect -->
-            <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-            
-            <!-- Loading spinner -->
-            <svg v-if="loading" class="animate-spin h-5 w-5 text-white relative z-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            
-            <!-- Microsoft icon -->
-            <svg v-else class="w-5 h-5 relative z-10" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
-            </svg>
-            
-            <span class="relative z-10">Sign in with Microsoft</span>
-          </button>
+          <!-- Error message -->
+          <div v-if="errorMessage" class="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
+            <p class="text-sm text-red-400">{{ errorMessage }}</p>
+          </div>
+
+          <!-- Login form -->
+          <form @submit.prevent="handleLogin" class="space-y-6">
+            <!-- Email field -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-slate-300 mb-2">
+                Email Address
+              </label>
+              <input
+                id="email"
+                v-model="form.email"
+                type="email"
+                required
+                autocomplete="email"
+                class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <!-- Password field -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                v-model="form.password"
+                type="password"
+                required
+                autocomplete="current-password"
+                class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <!-- Sign in button -->
+            <button 
+              type="submit"
+              :disabled="loading"
+              class="w-full group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 px-6 rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-3"
+            >
+              <!-- Shimmer effect -->
+              <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+              
+              <!-- Loading spinner -->
+              <svg v-if="loading" class="animate-spin h-5 w-5 text-white relative z-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              
+              <span class="relative z-10">{{ loading ? 'Signing in...' : 'Sign In' }}</span>
+            </button>
+          </form>
 
           <!-- Divider -->
           <div class="relative my-8">
@@ -134,24 +167,21 @@
               <div class="w-full border-t border-slate-700"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-4 bg-slate-800 text-slate-400">Secure authentication</span>
+              <span class="px-4 bg-slate-800 text-slate-400">Demo Credentials</span>
             </div>
           </div>
 
-          <!-- Security badges -->
-          <div class="flex items-center justify-center gap-6 text-xs text-slate-500">
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
-              <span>Microsoft Authentication</span>
+          <!-- Demo credentials -->
+          <div class="space-y-2 text-xs text-slate-400">
+            <p class="font-semibold text-slate-300">Test Accounts (Password: password123):</p>
+            <div class="grid grid-cols-1 gap-1">
+              <p>• <span class="text-indigo-400">Admin/RM:</span> rm@company.com</p>
+              <p>• <span class="text-indigo-400">Risk Owner:</span> michael.wong@company.com</p>
+              <p>• <span class="text-indigo-400">Risk Owner:</span> nayha@tuaspower.com.sg</p>
+              <p>• <span class="text-indigo-400">Action Owner:</span> david.lee@company.com</p>
+              <p>• <span class="text-indigo-400">Control Owner:</span> sarah.chen@company.com</p>
             </div>
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd" />
-              </svg>
-              <span>OAuth 2.0</span>
-            </div>
+            <p class="text-xs text-slate-500 mt-2">Note: Roles are determined by assignments (Risk/Action/Control Owner).</p>
           </div>
         </div>
 
@@ -178,12 +208,19 @@ const authStore = useAuthStore()
 const notificationStore = useNotificationStore()
 
 const loading = ref(false)
+const errorMessage = ref('')
 
-async function handleMicrosoftLogin() {
+const form = ref({
+  email: '',
+  password: ''
+})
+
+async function handleLogin() {
   loading.value = true
+  errorMessage.value = ''
 
   try {
-    await authStore.login()
+    await authStore.loginWithCredentials(form.value.email, form.value.password)
     
     notificationStore.success('Welcome back! Login successful.')
 
@@ -192,7 +229,7 @@ async function handleMicrosoftLogin() {
     router.push(redirect || '/')
   } catch (error: any) {
     console.error('Login error:', error)
-    notificationStore.error('Login failed. Please try again.')
+    errorMessage.value = error.message || 'Invalid email or password. Please try again.'
   } finally {
     loading.value = false
   }
