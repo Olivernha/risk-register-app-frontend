@@ -120,7 +120,7 @@
           </div>
 
           <!-- Rating Basis Threads -->
-          <div v-if="risk.ratings && risk.ratings.length > 0" class="space-y-4">
+          <div v-if="risk.status !== 'Draft' && risk.ratings && risk.ratings.length > 0" class="space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Rating Discussions</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div 
@@ -322,11 +322,51 @@
         />
       </div>
     </Modal>
+    
+    <!-- Delete Reason Modal -->
+    <Modal
+      :is-open="showDeleteModal"
+      title="Delete Risk"
+      @close="showDeleteModal = false"
+    >
+      <div class="space-y-4">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Are you sure you want to delete this risk? This action cannot be undone.
+          Please provide a reason for deletion.
+        </p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Reason for Deletion <span class="text-red-500">*</span>
+          </label>
+          <textarea
+            v-model="deleteReason"
+            rows="4"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Enter reason for deletion..."
+          ></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4">
+          <button
+            @click="showDeleteModal = false"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDelete"
+            :disabled="!deleteReason.trim()"
+            class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Delete Permanently
+          </button>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
@@ -344,6 +384,8 @@ const confirmStore = useConfirmStore()
 
 const showCreateMitigationModal = ref(false)
 const showDiscussionModal = ref(false)
+const showDeleteModal = ref(false)
+const deleteReason = ref('')
 const selectedRating = ref<Rating | null>(null)
 
 const selectedRatingOwner = computed(() => {
@@ -372,6 +414,16 @@ onMounted(() => {
   riskStore.fetchRiskById(id)
 })
 
+watch(risk, (newRisk) => {
+  if (newRisk && newRisk.status === 'Draft') {
+    const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+    if (!isRM) {
+      confirmStore.alert('Access Denied', 'This risk is still a draft and is only visible to Risk Management.')
+      router.push('/risks')
+    }
+  }
+})
+
 const canEdit = computed(() => {
   return authStore.hasRole(['RiskManagement', 'Admin'])
 })
@@ -388,9 +440,10 @@ const canDelete = computed(() => {
   if (!risk.value) return false
   const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
   const isDraft = risk.value.status === 'Draft'
-  const hasNoRatings = (!risk.value.ratings || risk.value.ratings.length === 0)
-  const hasNoMitigations = (!risk.value.mitigations || risk.value.mitigations.length === 0)
-  return isRM && isDraft && hasNoRatings && hasNoMitigations
+  // Check for actual submitted ratings (non-zero)
+  const hasNoActualRatings = !risk.value.ratings || risk.value.ratings.every(r => r.currentLikelihood === 0 && r.currentImpact === 0)
+  const hasNoMitigations = !risk.value.mitigations || risk.value.mitigations.length === 0
+  return isRM && isDraft && hasNoActualRatings && hasNoMitigations
 })
 
 const canRate = computed(() => {
@@ -437,16 +490,21 @@ async function handlePublish() {
 
 async function handleDelete() {
   if (!risk.value) return
+  deleteReason.value = ''
+  showDeleteModal.value = true
+}
 
-  const reason = prompt('Please enter a reason for deleting this risk:')
-  if (reason === null) return // user cancelled
-  if (!reason.trim()) {
+async function confirmDelete() {
+  if (!risk.value) return
+  
+  if (!deleteReason.value.trim()) {
     confirmStore.alert('Required', 'Deletion reason is required.')
     return
   }
 
   try {
-    await riskStore.deleteRisk(risk.value.id, reason)
+    await riskStore.deleteRisk(risk.value.id, deleteReason.value.trim())
+    showDeleteModal.value = false
     await confirmStore.alert('Success', 'Risk deleted successfully.')
     router.push('/risks')
   } catch (e: any) {

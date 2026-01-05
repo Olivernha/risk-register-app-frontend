@@ -60,9 +60,9 @@
       <div v-if="pendingRatings.length > 0 || myQuestions.length > 0" class="space-y-6">
         <!-- Risks Awaiting Rating -->
         <div v-if="pendingRatings.length > 0" class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-blue-50 dark:bg-blue-900/10">
-            <h3 class="font-semibold text-blue-900 dark:text-blue-100">Risks Awaiting My Rating</h3>
-            <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded-full">{{ pendingRatings.length }} pending</span>
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-red-50 dark:bg-red-900/10">
+            <h3 class="font-semibold text-red-900 dark:text-red-100">Risks Awaiting My Rating</h3>
+            <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">{{ pendingRatings.length }} pending</span>
           </div>
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
@@ -79,7 +79,7 @@
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ risk.title }}</td>
                 <td class="px-6 py-4 text-sm text-red-600 dark:text-red-400 font-medium">Internal Deadline: TBD</td>
                 <td class="px-6 py-4 text-right">
-                  <button @click="$router.push(`/risks/${risk.id}/rate`)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium">
+                  <button @click="$router.push(`/risks/${risk.id}/rate`)" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium">
                     Rate Now →
                   </button>
                 </td>
@@ -90,9 +90,9 @@
 
         <!-- My Questions -->
         <div v-if="myQuestions.length > 0" class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-purple-50 dark:bg-purple-900/10">
-            <h3 class="font-semibold text-purple-900 dark:text-purple-100">Questions Assigned to Me</h3>
-            <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs px-2 py-1 rounded-full">{{ myQuestions.length }} open</span>
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-red-50 dark:bg-red-900/10">
+            <h3 class="font-semibold text-red-900 dark:text-red-100">Questions Assigned to Me</h3>
+            <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">{{ myQuestions.length }} open</span>
           </div>
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
@@ -113,7 +113,7 @@
                   </span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <button @click="$router.push(`/risks/${item.riskId}?tab=questions`)" class="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 text-sm font-medium">
+                  <button @click="$router.push(`/risks/${item.riskId}?tab=questions`)" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium">
                     Reply →
                   </button>
                 </td>
@@ -171,9 +171,9 @@
        <!-- Section: Risk Management Tasks -->
       <div v-if="authStore.hasRole(['RiskManagement', 'Admin'])" class="space-y-6">
         <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-orange-50 dark:bg-orange-900/10">
-            <h3 class="font-semibold text-orange-900 dark:text-orange-100">Risks Pending Publication</h3>
-            <span class="bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-xs px-2 py-1 rounded-full">{{ draftRisks.length }} drafts</span>
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-red-50 dark:bg-red-900/10">
+            <h3 class="font-semibold text-red-900 dark:text-red-100">Risks Pending Publication</h3>
+            <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">{{ draftRisks.length }} drafts</span>
           </div>
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-700/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
@@ -192,7 +192,7 @@
                 <td class="px-6 py-4 text-sm">{{ risk.category }}</td>
                  <td class="px-6 py-4 text-sm">{{ risk.owners.map(o => o.name).join(', ') }}</td>
                 <td class="px-6 py-4 text-right">
-                  <button @click="$router.push(`/risks/${risk.id}`)" class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 text-sm font-medium">
+                  <button @click="$router.push(`/risks/${risk.id}`)" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium">
                     Review →
                   </button>
                 </td>
@@ -258,8 +258,8 @@ const myQuestions = computed(() => {
     if (!currentUserId.value) return []
     const list: { riskId: string, riskRef: string, question: Question }[] = []
     
-    risks.value.forEach((risk: Risk) => {
-        const assignedQs = risk.questions.filter((q: Question) => q.assignedTo.userId === currentUserId.value && q.status === 'Open')
+risks.value.forEach((risk: Risk) => {
+        const assignedQs = (risk.questions || []).filter((q: Question) => q.assignedTo.userId === currentUserId.value && q.status === 'Open')
         assignedQs.forEach((q: Question) => {
             list.push({ riskId: risk.id, riskRef: risk.refNo, question: q })
         })
@@ -272,9 +272,9 @@ const myMitigations = computed(() => {
     if (!currentUserId.value) return []
     const list: { riskId: string, riskRef: string, mitigation: Mitigation }[] = []
 
-    risks.value.forEach((risk: Risk) => {
+risks.value.forEach((risk: Risk) => {
         // Show ALL assigned mitigations, including completed ones
-        const assignedMs = risk.mitigations.filter((m: Mitigation) => m.actionOwner.userId === currentUserId.value)
+        const assignedMs = (risk.mitigations || []).filter((m: Mitigation) => m.actionOwner.userId === currentUserId.value)
         assignedMs.forEach((m: Mitigation) => {
             list.push({ riskId: risk.id, riskRef: risk.refNo, mitigation: m })
         })

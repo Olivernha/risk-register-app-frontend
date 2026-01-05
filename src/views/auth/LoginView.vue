@@ -71,7 +71,7 @@
         <div class="mt-auto pt-12 fade-in" style="animation-delay: 0.4s">
           <div class="border-l-4 border-indigo-500 pl-4">
             <p class="text-slate-300 italic text-sm leading-relaxed">
-              "Proactive risk management is the cornerstone of organizational resilience."
+              "The essence of risk management is not to eliminate risk, but to understand and manage it effectively."
             </p>
           </div>
         </div>
@@ -181,8 +181,7 @@
               <p>• <span class="text-indigo-400">Action Owner:</span> david.lee@company.com</p>
               <p>• <span class="text-indigo-400">Control Owner:</span> sarah.chen@company.com</p>
             </div>
-            <p class="text-xs text-slate-500 mt-2">Note: Roles are determined by assignments (Risk/Action/Control Owner).</p>
-          </div>
+           </div>
         </div>
 
         <!-- Help text -->

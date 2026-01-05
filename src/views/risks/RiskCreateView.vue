@@ -256,12 +256,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVersionStore } from '@/stores/version'
 import { useNotifications } from '@/composables/useNotifications'
+import { useAuthStore } from '@/stores/auth'
 import riskService, { type CreateRiskRequest } from '@/api/risks'
 import userService from '@/api/users'
-import type { User, TimeHorizon, RiskCategory } from '@/types'
+import type { User, TimeHorizon, RiskCategory, RiskOwner, Rating, AuditInfo } from '@/types'
 
 const router = useRouter()
 const versionStore = useVersionStore()
+const authStore = useAuthStore()
 const { showSuccess, showError } = useNotifications()
 
 const form = ref<{
@@ -289,6 +291,7 @@ const form = ref<{
 })
 
 const errors = ref<Record<string, string>>({})
+const error = ref('')
 const isSubmitting = ref(false)
 const riskOwners = ref<User[]>([])
 const loadingOwners = ref(false)
@@ -312,10 +315,11 @@ onMounted(async () => {
     console.error('Failed to fetch versions:', error)
   }
 
-  // Fetch risk owners (users with RiskOwner role)
+  // Fetch risk owners
   loadingOwners.value = true
   try {
-    riskOwners.value = await userService.getUsersByRole('RiskOwner')
+    const allUsers = await userService.getUsers()
+    riskOwners.value = allUsers.filter(u => u.active !== false)
   } catch (error) {
     console.error('Failed to fetch risk owners:', error)
     showError('Failed to load risk owners. Please refresh the page.')
@@ -392,6 +396,31 @@ async function handleSubmit() {
   isSubmitting.value = true
 
   try {
+    const selectedOwnerObjects: RiskOwner[] = riskOwners.value
+      .filter(u => form.value.owners.includes(u.userId))
+      .map(u => ({
+        userId: u.userId,
+        name: u.name,
+        email: u.email,
+        assignedAt: new Date()
+      }))
+
+    const ratings: Rating[] = selectedOwnerObjects.map(owner => ({
+      ownerId: owner.userId,
+      currentLikelihood: 0,
+      currentImpact: 0,
+      basisThreadId: '',
+      updatedAt: new Date(),
+      history: []
+    }))
+
+    const audit: AuditInfo = {
+      createdBy: authStore.user?.userId || 'System',
+      createdAt: new Date(),
+      updatedBy: authStore.user?.userId || 'System',
+      updatedAt: new Date()
+    }
+
     const payload: CreateRiskRequest = {
       refNo: form.value.refNo.trim(),
       title: form.value.title.trim(),
@@ -402,9 +431,13 @@ async function handleSubmit() {
         hasImpact: form.value.financialImpact.hasImpact,
         amount: form.value.financialImpact.hasImpact ? form.value.financialImpact.amount : undefined,
       },
-      owners: form.value.owners,
+      owners: selectedOwnerObjects,
       version: activeVersion.value.cycle,
       status: 'Draft',
+      ratings,
+      mitigations: [],
+      questions: [],
+      audit
     }
 
     await riskService.createRisk(payload)

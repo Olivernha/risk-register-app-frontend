@@ -82,7 +82,7 @@
         "hasImpact": true,
         "amount": 1000000
       },
-      "status": "Published",
+      "status": "Locked",
       "version": "2025 Q4",
       "owners": [
         {
@@ -158,10 +158,10 @@
       "audit": {
         "createdBy": "RM001",
         "createdAt": "2025-12-16T00:00:00Z",
-        "updatedBy": "RM001",
-        "updatedAt": "2025-12-16T09:13:52.114Z",
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-18T06:34:38.690Z",
         "lockedBy": "Current User",
-        "lockedAt": "2025-12-16T08:45:47.130Z"
+        "lockedAt": "2025-12-18T06:34:38.690Z"
       },
       "averageRating": {
         "likelihood": 3,
@@ -169,6 +169,175 @@
         "riskLevel": "Very High",
         "color": "#ef4444"
       }
+    },
+    {
+      "refNo": "R2",
+      "title": "risk 1",
+      "description": "risk 1",
+      "timeHorizon": "1-3 years",
+      "category": "Compliance",
+      "financialImpact": {
+        "hasImpact": false
+      },
+      "owners": [
+        "U006"
+      ],
+      "version": "2025 Q4",
+      "status": "Deleted",
+      "id": "VmwBalt",
+      "audit": {
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-18T03:55:32.608Z",
+        "deletedBy": "Current User",
+        "deletedAt": "2025-12-18T03:55:32.608Z",
+        "deleteReason": "i dont like"
+      }
+    },
+    {
+      "refNo": "R3",
+      "title": "risk 2",
+      "description": "risk 2",
+      "timeHorizon": "< 1 year",
+      "category": "Strategic",
+      "financialImpact": {
+        "hasImpact": false
+      },
+      "owners": [
+        "U006"
+      ],
+      "version": "2025 Q4",
+      "status": "Deleted",
+      "id": "kDmj1Vw",
+      "audit": {
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-18T03:55:21.369Z",
+        "deletedBy": "Current User",
+        "deletedAt": "2025-12-18T03:55:21.369Z",
+        "deleteReason": "i dont like"
+      }
+    },
+    {
+      "refNo": "R4",
+      "title": "risk 3",
+      "description": "risk 3",
+      "timeHorizon": "< 1 year",
+      "category": "Strategic",
+      "financialImpact": {
+        "hasImpact": false
+      },
+      "owners": [
+        {
+          "userId": "U005",
+          "name": "Sarah Chen",
+          "email": "sarah.chen@company.com",
+          "assignedAt": "2025-12-18T04:10:26.630Z"
+        },
+        {
+          "userId": "U006",
+          "name": "David Lee",
+          "email": "david.lee@company.com",
+          "assignedAt": "2025-12-18T03:55:02.969Z"
+        }
+      ],
+      "version": "2025 Q4",
+      "status": "Locked",
+      "ratings": [
+        {
+          "ownerId": "U006",
+          "currentLikelihood": 0,
+          "currentImpact": 0,
+          "basisThreadId": "",
+          "submittedAt": "2025-12-18T03:55:02.969Z",
+          "updatedAt": "2025-12-18T03:55:02.969Z",
+          "history": []
+        },
+        {
+          "ownerId": "U005",
+          "currentLikelihood": 1,
+          "currentImpact": 4,
+          "basisThreadId": 4,
+          "submittedAt": "2025-12-18T04:30:26.217Z",
+          "updatedAt": "2025-12-18T04:30:26.217Z",
+          "history": [
+            {
+              "likelihood": 0,
+              "impact": 0,
+              "changedAt": "2025-12-18T04:30:26.217Z",
+              "reason": "testonggggggggggggggg"
+            }
+          ]
+        }
+      ],
+      "mitigations": [],
+      "questions": [],
+      "audit": {
+        "createdBy": "RM001",
+        "createdAt": "2025-12-18T03:55:02.969Z",
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-18T06:36:17.403Z",
+        "lockedBy": "Current User",
+        "lockedAt": "2025-12-18T06:36:17.403Z"
+      },
+      "id": "Vv2nndH",
+      "averageRating": {
+        "likelihood": 1,
+        "impact": 2,
+        "riskLevel": "Low",
+        "color": "#22c55e"
+      }
+    },
+    {
+      "refNo": "R5",
+      "title": "New Risk",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+      "timeHorizon": "> 3 years",
+      "category": "Compliance",
+      "financialImpact": {
+        "hasImpact": false
+      },
+      "owners": [
+        {
+          "userId": "nayha@tuaspower.com.sg",
+          "name": "Oliver Nayha",
+          "email": "nayha@tuaspower.com.sg",
+          "assignedAt": "2025-12-30T03:24:42.876Z"
+        },
+        {
+          "userId": "U006",
+          "name": "David Lee",
+          "email": "david.lee@company.com",
+          "assignedAt": "2025-12-30T03:24:42.876Z"
+        }
+      ],
+      "version": "2025 Q4",
+      "status": "Published",
+      "ratings": [
+        {
+          "ownerId": "nayha@tuaspower.com.sg",
+          "currentLikelihood": 0,
+          "currentImpact": 0,
+          "basisThreadId": 5,
+          "updatedAt": "2025-12-30T03:24:42.876Z",
+          "history": []
+        },
+        {
+          "ownerId": "U006",
+          "currentLikelihood": 0,
+          "currentImpact": 0,
+          "basisThreadId": "",
+          "updatedAt": "2025-12-30T03:24:42.876Z",
+          "history": []
+        }
+      ],
+      "mitigations": [],
+      "questions": [],
+      "audit": {
+        "createdBy": "RM001",
+        "createdAt": "2025-12-30T03:24:42.876Z",
+        "updatedBy": "Current User",
+        "updatedAt": "2025-12-30T03:25:16.963Z"
+      },
+      "id": "4y8rusl"
     }
   ],
   "heatmap": [
@@ -376,21 +545,28 @@
           "mentions": []
         },
         {
-          "commentId": "comment-1765874651699",
+          "commentId": "comment-1765940999225",
+          "userId": "U006",
+          "userName": "David Lee",
+          "userRole": "User",
+          "message": "<p>Hello world</p><p></p>",
+          "timestamp": "2025-12-17T03:09:59.225Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1766030770755",
           "userId": "RM001",
           "userName": "Risk Manager",
           "userRole": "RiskManagement",
-          "message": "<p>@Oliver Nayha ok i got it</p><p></p>",
-          "timestamp": "2025-12-16T08:44:11.699Z",
+          "message": "<p>test</p>",
+          "timestamp": "2025-12-18T04:06:10.755Z",
           "edited": false,
-          "mentions": [
-            "nayha@tuaspower.com.sg"
-          ],
-          "parentId": "comment-1765874446306"
+          "mentions": []
         }
       ],
       "createdAt": "2025-12-16T08:40:46.209Z",
-      "lastCommentAt": "2025-12-16T08:44:11.699Z",
+      "lastCommentAt": "2025-12-18T04:06:10.755Z",
       "id": 2
     },
     {
@@ -448,11 +624,75 @@
           "timestamp": "2025-12-16T09:17:19.310Z",
           "edited": false,
           "mentions": []
+        },
+        {
+          "commentId": "comment-1765961963716",
+          "userId": "U006",
+          "userName": "David Lee",
+          "userRole": "User",
+          "message": "<p>yes can</p>",
+          "timestamp": "2025-12-17T08:59:23.716Z",
+          "edited": false,
+          "mentions": []
         }
       ],
       "createdAt": "2025-12-16T08:53:06.702Z",
-      "lastCommentAt": "2025-12-16T09:17:19.310Z",
+      "lastCommentAt": "2025-12-17T08:59:23.716Z",
       "id": 3
+    },
+    {
+      "entityType": "rating_basis",
+      "entityId": "Vv2nndH-U005",
+      "riskRef": "R4",
+      "version": "2025 Q4",
+      "comments": [
+        {
+          "commentId": "comment-1766032189209",
+          "userId": "U005",
+          "userName": "Sarah Chen",
+          "userRole": "User",
+          "message": "<p>hello world</p>",
+          "timestamp": "2025-12-18T04:29:49.209Z",
+          "edited": false,
+          "mentions": []
+        },
+        {
+          "commentId": "comment-1766032226171",
+          "userId": "U005",
+          "userName": "Sarah Chen",
+          "userRole": "User",
+          "message": "testonggggggggggggggg",
+          "timestamp": "2025-12-18T04:30:26.171Z",
+          "edited": false,
+          "mentions": []
+        }
+      ],
+      "createdAt": "2025-12-18T04:29:49.140Z",
+      "lastCommentAt": "2025-12-18T04:30:26.171Z",
+      "id": 4
+    },
+    {
+      "entityType": "rating_basis",
+      "entityId": "4y8rusl-nayha@tuaspower.com.sg",
+      "riskRef": "R5",
+      "version": "2025 Q4",
+      "comments": [
+        {
+          "commentId": "comment-1767065176304",
+          "userId": "RM001",
+          "userName": "Risk Manager",
+          "userRole": "RiskManagement",
+          "message": "<p>@Risk Manager Nice to meet you</p>",
+          "timestamp": "2025-12-30T03:26:16.304Z",
+          "edited": false,
+          "mentions": [
+            "RM001"
+          ]
+        }
+      ],
+      "createdAt": "2025-12-30T03:26:16.231Z",
+      "lastCommentAt": "2025-12-30T03:26:16.304Z",
+      "id": 5
     }
   ]
 }

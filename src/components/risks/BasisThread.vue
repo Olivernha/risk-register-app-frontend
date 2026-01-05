@@ -11,14 +11,27 @@
 
     <!-- Rating History Section -->
     <div v-if="rating && rating.history && rating.history.length > 0" class="mb-6">
-      <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-        Rating History
-      </h4>
-      <div class="space-y-2">
+      <button 
+        @click="showHistory = !showHistory"
+        class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none w-full text-left"
+      >
+        <span>Rating History ({{ rating.history.length }})</span>
+        <svg 
+          class="w-4 h-4 transition-transform duration-200" 
+          :class="{ 'rotate-180': showHistory }" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div v-show="showHistory" class="space-y-2 fade-in">
         <div
           v-for="(entry, idx) in rating.history"
           :key="idx"
-          class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-md"
+          class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-md border border-gray-100 dark:border-gray-700"
         >
           <div class="flex-1">
             <div class="flex items-center gap-2 text-sm">
@@ -168,6 +181,7 @@ const submitting = ref(false)
 const showMentionSuggestions = ref(false)
 const mentionableUsers = ref<User[]>([])
 const currentMentionQuery = ref('')
+const showHistory = ref(false)
 
 const editor = useEditor({
   extensions: [StarterKit],

@@ -253,8 +253,9 @@ export const useRiskStore = defineStore('risk', () => {
       if (risk.status !== 'Draft') {
         throw new Error('Only Draft risks can be deleted')
       }
-      if (risk.ratings && risk.ratings.length > 0) {
-        throw new Error('Cannot delete risk that has ratings')
+      const hasActualRatings = risk.ratings && risk.ratings.some((r: any) => r.currentLikelihood > 0 || r.currentImpact > 0)
+      if (hasActualRatings) {
+        throw new Error('Cannot delete risk that has actual submitted ratings')
       }
       if (risk.mitigations && risk.mitigations.length > 0) {
         throw new Error('Cannot delete risk that has mitigations')

@@ -31,7 +31,7 @@
 
     <!-- Filters -->
     <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <div class="md:col-span-1">
           <input
             v-model="searchQuery"
@@ -63,6 +63,10 @@
         <select v-model="selectedDepartment" class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
           <option value="All Departments">All Departments</option>
           <option v-for="dept in availableDepartments" :key="dept" :value="dept">{{ dept }}</option>
+        </select>
+        <select v-model="selectedOwner" class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+          <option value="All Owners">All Owners</option>
+          <option v-for="user in users" :key="user.userId" :value="user.userId">{{ user.name }}</option>
         </select>
       </div>
     </div>
@@ -199,6 +203,7 @@ const selectedLevel = ref('All Levels')
 const selectedCategory = ref('All Categories')
 const selectedStatus = ref('All Statuses')
 const selectedDepartment = ref('All Departments')
+const selectedOwner = ref('All Owners')
 
 const sortKey = ref('')
 const sortOrder = ref<'asc' | 'desc'>('asc')
@@ -258,13 +263,16 @@ const allowedRisks = computed(() => {
     if (!user) return []
 
     // Base filter: exclude deleted risks
-    const activeRisks = risks.value.filter((r: Risk) => r.status !== 'Deleted')
+    let activeRisks = risks.value.filter((r: Risk) => r.status !== 'Deleted')
 
-    // RM/Admin: View All
+    // RM/Admin: View All (including Drafts)
     if (['RiskManagement', 'Admin'].includes(user.role)) {
         return activeRisks
     }
     
+    // For all other roles, hide Draft risks
+    activeRisks = activeRisks.filter((r: Risk) => r.status !== 'Draft')
+
     // HOD: View risks where owners match HOD department
     if (user.role === 'HOD') {
         return activeRisks.filter((risk: Risk) => 
@@ -273,7 +281,6 @@ const allowedRisks = computed(() => {
     }
 
     // Role Owner / Action Owner: View Assigned
-    // Default fallback for others
     return activeRisks.filter((risk: Risk) => 
         risk.owners.some((o: any) => o.userId === user.userId) || 
         risk.mitigations.some((m: any) => m.actionOwner.userId === user.userId)
@@ -297,7 +304,12 @@ const filteredRisks = computed(() => {
         matchesDept = risk.owners.some((o: any) => getOwnerDepartment(o.userId) === selectedDepartment.value)
     }
 
-    return matchesSearch && matchesLevel && matchesCategory && matchesStatus && matchesDept
+    let matchesOwner = true
+    if (selectedOwner.value !== 'All Owners') {
+        matchesOwner = risk.owners.some((o: any) => o.userId === selectedOwner.value)
+    }
+
+    return matchesSearch && matchesLevel && matchesCategory && matchesStatus && matchesDept && matchesOwner
   })
 
   // Sorting
@@ -396,7 +408,7 @@ function formatDate(date?: Date | string) {
 }
 
 // Reset pagination on filter change
-watch([searchQuery, selectedLevel, selectedCategory, selectedStatus, selectedDepartment], () => {
+watch([searchQuery, selectedLevel, selectedCategory, selectedStatus, selectedDepartment, selectedOwner], () => {
     currentPage.value = 1
 })
 </script>

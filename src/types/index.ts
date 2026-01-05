@@ -1,5 +1,5 @@
 // User types
-export type UserRole = 'RiskManagement' | 'RiskOwner' | 'ActionOwner' | 'HOD' | 'Admin'
+export type UserRole = 'RiskManagement' | 'RiskOwner' | 'ActionOwner' | 'HOD' | 'Admin' | 'User'
 
 export interface User {
   userId: string
@@ -69,7 +69,7 @@ export interface Rating {
   residualLikelihood?: number
   residualImpact?: number
   basisThreadId: string
-  submittedAt: Date
+  submittedAt?: Date
   updatedAt: Date
   history: RatingHistory[]
 }
