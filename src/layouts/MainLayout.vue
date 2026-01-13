@@ -188,7 +188,7 @@
               </router-link>
 
               <router-link
-                v-if="authStore.hasRole(['Admin'])"
+                v-if="authStore.hasRole(['Admin', 'RiskManagement'])"
                 to="/users"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:translate-x-1"
                 active-class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 text-indigo-600 dark:text-indigo-400 font-semibold"

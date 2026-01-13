@@ -5,15 +5,29 @@
         <h1 class="text-3xl font-bold text-slate-900">User Management</h1>
         <p class="text-slate-500 mt-1">Manage system users and their roles</p>
       </div>
-      <button 
-        @click="openCreateModal"
-        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-sm font-medium"
-      >
-        <span class="mr-2">Add User</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
+      <div class="flex gap-2">
+        <button 
+          @click="openCreateModalWithRole('RiskOwner')"
+          class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-xl hover:bg-indigo-100 transition-all shadow-sm font-medium text-sm"
+        >
+          Add Risk Owner
+        </button>
+        <button 
+          @click="openCreateModalWithRole('ActionOwner')"
+          class="inline-flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-100 transition-all shadow-sm font-medium text-sm"
+        >
+          Add Action Owner
+        </button>
+        <button 
+          @click="openCreateModal"
+          class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-sm font-medium"
+        >
+          <span class="mr-2 text-sm">Add Other User</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Filters and Statistics -->
@@ -22,11 +36,11 @@
         <div class="text-slate-500 text-sm font-medium">Total Users</div>
         <div class="text-2xl font-bold text-slate-900 mt-1">{{ users.length }}</div>
       </div>
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-indigo-300 transition-all" @click="searchQuery = ''; filterRole = 'RiskOwner'">
         <div class="text-slate-500 text-sm font-medium">Risk Owners</div>
         <div class="text-2xl font-bold text-indigo-600 mt-1">{{ roleCount('RiskOwner') }}</div>
       </div>
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm cursor-pointer hover:border-emerald-300 transition-all" @click="searchQuery = ''; filterRole = 'ActionOwner'">
         <div class="text-slate-500 text-sm font-medium">Action Owners</div>
         <div class="text-2xl font-bold text-emerald-600 mt-1">{{ roleCount('ActionOwner') }}</div>
       </div>
@@ -34,6 +48,34 @@
         <div class="text-slate-500 text-sm font-medium">Risk Management</div>
         <div class="text-2xl font-bold text-amber-600 mt-1">{{ roleCount('RiskManagement') }}</div>
       </div>
+    </div>
+
+    <!-- Search and Quick Filters -->
+    <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="relative flex-1 group">
+        <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input 
+          v-model="searchQuery"
+          type="text" 
+          placeholder="Search owners by name or email..." 
+          class="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+        />
+      </div>
+      <select 
+        v-model="filterRole"
+        class="w-full md:w-48 px-4 py-2 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium text-slate-700"
+      >
+        <option value="All">All Roles</option>
+        <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+      </select>
+      <button 
+        @click="searchQuery = ''; filterRole = 'All'"
+        class="text-sm text-slate-500 hover:text-indigo-600 font-medium px-2"
+      >
+        Reset
+      </button>
     </div>
 
     <!-- User Table -->
@@ -51,7 +93,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200">
-            <tr v-for="user in users" :key="user.userId" class="hover:bg-slate-50 transition-colors">
+            <tr v-for="user in filteredUsers" :key="user.userId" class="hover:bg-slate-50 transition-colors">
               <td class="px-6 py-4">
                 <div class="font-medium text-slate-900">{{ user.name }}</div>
               </td>
@@ -177,7 +219,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import userService from '@/api/users'
 import type { User, UserRole } from '@/types'
 import Modal from '@/components/common/Modal.vue'
@@ -189,6 +231,20 @@ const saving = ref(false)
 const showModal = ref(false)
 const isEditing = ref(false)
 const selectedUser = ref<User | null>(null)
+const searchQuery = ref('')
+const filterRole = ref('All')
+
+const filteredUsers = computed(() => {
+  return users.value.filter(user => {
+    const matchesSearch = 
+      user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+    
+    const matchesRole = filterRole.value === 'All' || user.role === filterRole.value
+    
+    return matchesSearch && matchesRole
+  })
+})
 
 const confirmStore = useConfirmStore()
 
@@ -241,6 +297,11 @@ const openCreateModal = () => {
   selectedUser.value = null
   resetForm()
   showModal.value = true
+}
+
+const openCreateModalWithRole = (role: UserRole) => {
+  openCreateModal()
+  formData.role = role
 }
 
 const openEditModal = (user: User) => {
