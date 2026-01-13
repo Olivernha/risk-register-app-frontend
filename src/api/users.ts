@@ -26,6 +26,36 @@ class UserService {
     const response = await api.get<User>(`/users/${id}`)
     return response.data
   }
+
+  /**
+   * Create a new user
+   */
+  async createUser(data: Omit<User, 'permissions'>) {
+    // Add default permissions based on role if needed
+    const newUser = {
+      ...data,
+      permissions: [], // Default empty or based on role
+      active: true
+    }
+    const response = await api.post<User>('/users', newUser)
+    return response.data
+  }
+
+  /**
+   * Update an existing user
+   */
+  async updateUser(id: string, data: Partial<User>) {
+    const response = await api.patch<User>(`/users/${id}`, data)
+    return response.data
+  }
+
+  /**
+   * Delete a user
+   */
+  async deleteUser(id: string) {
+    const response = await api.delete(`/users/${id}`)
+    return response.data
+  }
 }
 
 export default new UserService()

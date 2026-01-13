@@ -52,7 +52,26 @@ export interface Risk {
   averageRating?: AverageRating
   mitigations: Mitigation[]
   questions: Question[]
+  subRisks?: SubRisk[]
   audit: AuditInfo
+}
+
+export interface SubRisk {
+  subRiskId: string
+  refNo: string
+  title: string
+  description: string
+  mitigationMeasures?: string
+  actionItem?: string
+  actionOwner?: {
+    userId: string
+    name: string
+  }
+  status?: MitigationStatus
+  targetDate?: Date
+  actualCompletionDate?: Date
+  progressPercentage?: number
+  progressComments?: string
 }
 
 export interface RiskOwner {

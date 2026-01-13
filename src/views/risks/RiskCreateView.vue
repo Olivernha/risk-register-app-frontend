@@ -228,6 +228,14 @@
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">New risks always start as Draft</p>
         </div>
 
+        <!-- Sub-risks Section -->
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+          <SubRiskManager 
+            v-model="form.subRisks"
+            :primary-ref-no="form.refNo"
+          />
+        </div>
+
         <!-- Action Buttons -->
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
@@ -259,7 +267,8 @@ import { useNotifications } from '@/composables/useNotifications'
 import { useAuthStore } from '@/stores/auth'
 import riskService, { type CreateRiskRequest } from '@/api/risks'
 import userService from '@/api/users'
-import type { User, TimeHorizon, RiskCategory, RiskOwner, Rating, AuditInfo } from '@/types'
+import type { User, TimeHorizon, RiskCategory, RiskOwner, Rating, AuditInfo, SubRisk } from '@/types'
+import SubRiskManager from '@/components/risks/SubRiskManager.vue'
 
 const router = useRouter()
 const versionStore = useVersionStore()
@@ -277,6 +286,7 @@ const form = ref<{
     amount?: number
   }
   owners: string[]
+  subRisks: SubRisk[]
 }>({
   refNo: '',
   title: '',
@@ -288,6 +298,7 @@ const form = ref<{
     amount: undefined,
   },
   owners: [],
+  subRisks: []
 })
 
 const errors = ref<Record<string, string>>({})
@@ -435,8 +446,7 @@ async function handleSubmit() {
       version: activeVersion.value.cycle,
       status: 'Draft',
       ratings,
-      mitigations: [],
-      questions: [],
+      subRisks: form.value.subRisks,
       audit
     }
 

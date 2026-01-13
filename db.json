@@ -350,9 +350,27 @@
         "createdBy": "RM001",
         "createdAt": "2025-12-30T03:24:42.876Z",
         "updatedBy": "Current User",
-        "updatedAt": "2025-12-30T03:25:16.963Z"
+        "updatedAt": "2026-01-13T04:47:57.442Z"
       },
-      "id": "4y8rusl"
+      "id": "4y8rusl",
+      "subRisks": [
+        {
+          "subRiskId": "SR1768279677442",
+          "refNo": "R5.1",
+          "title": "sub title",
+          "description": " There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc",
+          "mitigationMeasures": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+          "actionItem": "If you use this site regularly and would like to help keep the site on the Internet, please consider donating a small sum to help pay for the hosting and bandwidth bill. There is no minimum donation, any sum is appreciated - click here to donate using PayPal. Thank you for your support. Donate bitcoin: 16UQLq1HZ3CNwhvgrarV6pMoA2CDjb4tyF",
+          "actionOwner": {
+            "userId": "U005",
+            "name": "Sarah Chen"
+          },
+          "status": "Not Started",
+          "targetDate": "2026-01-22T00:00:00.000Z",
+          "progressPercentage": 0,
+          "progressComments": ""
+        }
+      ]
     },
     {
       "refNo": "R6",
@@ -420,112 +438,6 @@
         "updatedAt": "2026-01-05T02:37:18.319Z"
       },
       "id": "otTsS0M"
-    },
-    {
-      "refNo": "R122343445",
-      "title": "Risk new updated 1",
-      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-      "timeHorizon": "< 1 year",
-      "category": "Operational",
-      "financialImpact": {
-        "hasImpact": true,
-        "amount": 200
-      },
-      "owners": [
-        {
-          "userId": "U001",
-          "name": "Michael Wong",
-          "email": "michael.wong@company.com",
-          "assignedAt": "2026-01-08T01:15:52.475Z"
-        },
-        {
-          "userId": "nayha@tuaspower.com.sg",
-          "name": "Oliver Nayha",
-          "email": "nayha@tuaspower.com.sg",
-          "assignedAt": "2026-01-08T01:15:52.475Z"
-        }
-      ],
-      "version": "2025 Q4",
-      "status": "Locked",
-      "ratings": [
-        {
-          "ownerId": "U001",
-          "currentLikelihood": 0,
-          "currentImpact": 0,
-          "basisThreadId": 8,
-          "updatedAt": "2026-01-08T01:15:52.475Z",
-          "history": []
-        },
-        {
-          "ownerId": "nayha@tuaspower.com.sg",
-          "currentLikelihood": 3,
-          "currentImpact": 3,
-          "residualLikelihood": 2,
-          "basisThreadId": 7,
-          "submittedAt": "2026-01-08T01:20:03.431Z",
-          "updatedAt": "2026-01-08T01:20:03.431Z",
-          "history": [
-            {
-              "likelihood": 0,
-              "impact": 0,
-              "changedAt": "2026-01-08T01:20:03.431Z",
-              "reason": "How is going"
-            }
-          ]
-        }
-      ],
-      "mitigations": [
-        {
-          "controlId": "mit-1767835470546",
-          "title": "It need to have data",
-          "details": "<p>sgfgadfsadsfwdafca</p>",
-          "controlOwner": {
-            "userId": "RM001",
-            "name": "Risk Manager"
-          },
-          "actionOwner": {
-            "userId": "U005",
-            "name": "Sarah Chen"
-          },
-          "status": "Ongoing",
-          "targetDate": "2026-01-19T00:00:00.000Z",
-          "progressPercentage": 60,
-          "commentsThreadId": 9,
-          "createdAt": "2026-01-08T01:24:30.592Z",
-          "updatedAt": "2026-01-08T01:24:53.892Z"
-        }
-      ],
-      "questions": [
-        {
-          "questionId": "ac993a34-3834-4ff6-9a86-4c1e57605aee",
-          "text": "How is it going?",
-          "assignedTo": {
-            "userId": "nayha@tuaspower.com.sg",
-            "name": "Oliver Nayha"
-          },
-          "status": "Open",
-          "priority": "Medium",
-          "dueDate": "2026-01-29T00:00:00.000Z",
-          "threadId": 10,
-          "createdAt": "2026-01-08T01:25:31.240Z",
-          "createdBy": "Current User"
-        }
-      ],
-      "audit": {
-        "createdBy": "RM001",
-        "createdAt": "2026-01-08T01:15:52.475Z",
-        "updatedBy": "Current User",
-        "updatedAt": "2026-01-08T01:26:28.191Z",
-        "lockedBy": "Current User",
-        "lockedAt": "2026-01-08T01:26:28.191Z"
-      },
-      "id": "5xI6Ldt",
-      "averageRating": {
-        "likelihood": 3,
-        "impact": 3,
-        "riskLevel": "Medium",
-        "color": "#eab308"
-      }
     }
   ],
   "heatmap": [
@@ -1030,6 +942,16 @@
       "createdAt": "2026-01-08T01:25:31.172Z",
       "lastCommentAt": "2026-01-08T01:26:11.095Z",
       "id": 10
+    },
+    {
+      "entityType": "question_reply",
+      "entityId": "3fbd54eb-8255-480e-aa40-ebb0cd17d9b8",
+      "riskRef": "R122343447",
+      "version": "2025 Q4",
+      "comments": [],
+      "createdAt": "2026-01-13T03:59:42.909Z",
+      "lastCommentAt": "2026-01-13T03:59:42.909Z",
+      "id": 11
     }
   ]
 }

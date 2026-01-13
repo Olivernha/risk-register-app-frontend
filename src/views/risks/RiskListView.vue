@@ -96,59 +96,150 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <tr 
-              v-for="risk in paginatedRisks" 
-              :key="risk.id" 
-              class="hover:bg-gray-50 dark:hover:bg-slate-700/30 cursor-pointer"
-              @click="$router.push(`/risks/${risk.id}`)"
-            >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                {{ risk.refNo }}
-              </td>
-              <td class="px-6 py-4">
-                <div class="text-sm text-gray-900 dark:text-gray-100 font-medium">{{ risk.title }}</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{{ risk.description }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
-                {{ risk.category }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span :class="[
-                  'inline-block px-2 py-1 text-xs font-medium rounded',
-                  getRiskLevelClass(risk.averageRating?.riskLevel)
-                ]">
-                  {{ risk.averageRating?.riskLevel || 'Unrated' }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                <div class="flex flex-col gap-0.5">
-                  <span v-for="owner in risk.owners.slice(0, 2)" :key="owner.userId">
-                    {{ owner.name }}
-                    <span class="text-xs text-gray-400">({{ getOwnerDepartment(owner.userId) }})</span>
+            <template v-for="risk in paginatedRisks" :key="risk.id">
+              <tr 
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/30 cursor-pointer group"
+                :class="{ 'bg-blue-50/30 dark:bg-blue-900/10': expandedRisks.has(risk.id) }"
+                @click="toggleExpand(risk.id)"
+              >
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <span class="w-4 h-4 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-colors">
+                    <svg 
+                      class="w-3.5 h-3.5 transform transition-transform" 
+                      :class="{ 'rotate-90': expandedRisks.has(risk.id) }"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
                   </span>
-                  <span v-if="risk.owners.length > 2" class="text-xs text-gray-400">+{{ risk.owners.length - 2 }} more</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span :class="[
-                  'inline-block px-2 py-1 text-xs font-medium rounded',
-                  getStatusClass(risk.status)
-                ]">
-                  {{ risk.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-2">
-                  <div class="w-16 bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-                      <div class="bg-blue-600 h-1.5 rounded-full" :style="{ width: getMitigationProgress(risk) + '%' }"></div>
+                  {{ risk.refNo }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm text-gray-900 dark:text-gray-100 font-medium">{{ risk.title }}</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1 truncate max-w-md">{{ risk.description }}</div>
+                    </div>
+                    <button 
+                      @click.stop="$router.push(`/risks/${risk.id}`)"
+                      class="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-blue-600 transition-all rounded-full hover:bg-gray-100 dark:hover:bg-slate-700"
+                    >
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </button>
                   </div>
-                  <span class="text-xs text-gray-600 dark:text-gray-400">{{ getMitigationProgress(risk) }}%</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {{ formatDate(risk.audit?.updatedAt) || '-' }}
-              </td>
-            </tr>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                  {{ risk.category }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="[
+                    'inline-block px-2 py-1 text-xs font-medium rounded',
+                    getRiskLevelClass(risk.averageRating?.riskLevel)
+                  ]">
+                    {{ risk.averageRating?.riskLevel || 'Unrated' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div class="flex flex-col gap-0.5">
+                    <span v-for="owner in risk.owners.slice(0, 2)" :key="owner.userId">
+                      {{ owner.name }}
+                      <span class="text-xs text-gray-400">({{ getOwnerDepartment(owner.userId) }})</span>
+                    </span>
+                    <span v-if="risk.owners.length > 2" class="text-xs text-gray-400">+{{ risk.owners.length - 2 }} more</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="[
+                    'inline-block px-2 py-1 text-xs font-medium rounded',
+                    getStatusClass(risk.status)
+                  ]">
+                    {{ risk.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-1.5 rounded-full" :style="{ width: getMitigationProgress(risk) + '%' }"></div>
+                    </div>
+                    <span class="text-xs text-gray-600 dark:text-gray-400">{{ getMitigationProgress(risk) }}%</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  {{ formatDate(risk.audit?.updatedAt) || '-' }}
+                </td>
+              </tr>
+              <!-- Sub-risks Expanded Row -->
+              <tr v-if="expandedRisks.has(risk.id)" class="bg-gray-50/50 dark:bg-slate-900/20">
+                <td colspan="8" class="px-6 py-4">
+                  <div class="pl-6 border-l-2 border-blue-500/30">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
+                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      Sub-risks Breakdown ({{ risk.subRisks?.length || 0 }})
+                    </h4>
+                    <div v-if="!risk.subRisks || risk.subRisks.length === 0" class="text-xs text-gray-500 italic py-2">
+                      No sub-risks added for this risk.
+                    </div>
+                    <div v-else class="overflow-hidden rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm transition-all">
+                      <table class="w-full text-xs">
+                        <thead class="bg-gray-100 dark:bg-slate-800">
+                          <tr>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-500">Ref</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-500">Title</th>
+                            <th colspan="2" class="px-3 py-2 text-left font-semibold text-gray-500">Description</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-500">Action Owner</th>
+                            <th class="px-3 py-2 text-center font-semibold text-gray-500">Status</th>
+                            <th class="px-3 py-2 text-left font-semibold text-gray-500">Progress</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-slate-800/50">
+                          <tr v-for="sub in risk.subRisks" :key="sub.subRiskId" class="hover:bg-white dark:hover:bg-slate-700 transition-colors">
+                            <td class="px-3 py-2 font-bold text-blue-600 dark:text-blue-400">{{ sub.refNo }}</td>
+                            <td class="px-3 py-2 text-gray-900 dark:text-gray-100 font-medium">{{ sub.title }}</td>
+                            <td colspan="2" class="px-3 py-2 text-gray-600 dark:text-gray-400 italic line-clamp-1 truncate max-w-sm">{{ sub.description }}</td>
+                            <td class="px-3 py-2">
+                                <template v-if="sub.actionOwner">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[8px] font-bold uppercase">
+                                            {{ sub.actionOwner.name.substring(0, 2) }}
+                                        </div>
+                                        <span>{{ sub.actionOwner.name }}</span>
+                                    </div>
+                                </template>
+                                <span v-else class="text-gray-400 italic">Unassigned</span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <span v-if="sub.status" :class="[
+                                    'px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase inline-block',
+                                    sub.status === 'Completed' ? 'bg-green-100 text-green-700' :
+                                    sub.status === 'Ongoing' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                                ]">
+                                    {{ sub.status }}
+                                </span>
+                                <span v-else class="text-gray-400 italic">N/A</span>
+                            </td>
+                            <td class="px-3 py-2">
+                                <div v-if="sub.progressPercentage !== undefined" class="flex items-center gap-1.5 min-w-[60px]">
+                                    <div class="flex-1 h-1.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div 
+                                            class="h-full bg-blue-500 rounded-full transition-all duration-500"
+                                            :style="{ width: `${sub.progressPercentage}%` }"
+                                        ></div>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold text-gray-500">{{ sub.progressPercentage }}%</span>
+                                </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </template>
             <tr v-if="paginatedRisks.length === 0" class="hover:bg-transparent">
               <td :colspan="columns.length" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                 No risks found matching your criteria.
@@ -257,6 +348,16 @@ const getMitigationProgress = (risk: Risk) => {
     return Math.round(totalProgress / risk.mitigations.length)
 }
 
+const expandedRisks = ref<Set<string>>(new Set())
+
+function toggleExpand(riskId: string) {
+    if (expandedRisks.value.has(riskId)) {
+        expandedRisks.value.delete(riskId)
+    } else {
+        expandedRisks.value.add(riskId)
+    }
+}
+
 // Access Control & Filtering
 const allowedRisks = computed(() => {
     const user = authStore.user
@@ -293,7 +394,13 @@ const filteredRisks = computed(() => {
       risk.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
       risk.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       risk.refNo.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      risk.owners.some((o: any) => o.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      risk.owners.some((o: any) => o.name.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
+      risk.subRisks?.some((s: any) => 
+        s.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        s.description.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        s.actionOwner?.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        s.actionItem?.toLowerCase().includes(searchQuery.value.toLowerCase())
+      )
     
     const matchesLevel = selectedLevel.value === 'All Levels' || risk.averageRating?.riskLevel === selectedLevel.value
     const matchesCategory = selectedCategory.value === 'All Categories' || risk.category === selectedCategory.value

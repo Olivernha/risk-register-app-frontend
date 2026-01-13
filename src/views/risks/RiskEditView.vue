@@ -257,6 +257,14 @@
           />
         </div>
 
+        <!-- Sub-risks Section -->
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+          <SubRiskManager 
+            v-model="form.subRisks"
+            :primary-ref-no="risk?.refNo"
+          />
+        </div>
+
         <!-- Action Buttons -->
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
@@ -283,14 +291,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { useNotifications } from '@/composables/useNotifications'
 import { useConfirmStore } from '@/stores/confirm'
 import riskService, { type UpdateRiskRequest } from '@/api/risks'
 import userService from '@/api/users'   
-import type { Risk, User, TimeHorizon, RiskCategory } from '@/types'
+import type { Risk, User, TimeHorizon, RiskCategory, SubRisk } from '@/types'
+import SubRiskManager from '@/components/risks/SubRiskManager.vue'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 const { showSuccess, showError } = useNotifications()
 const confirmStore = useConfirmStore()
 
@@ -312,6 +323,7 @@ const form = ref<{
     amount?: number
   }
   owners: string[]
+  subRisks: SubRisk[]
 }>({
   title: '',
   description: '',
@@ -322,6 +334,7 @@ const form = ref<{
     amount: undefined,
   },
   owners: [],
+  subRisks: []
 })
 
 const errors = ref<Record<string, string>>({})
@@ -370,6 +383,7 @@ async function loadRisk() {
         amount: riskData.financialImpact.amount,
       },
       owners: riskData.owners.map(o => o.userId),
+      subRisks: riskData.subRisks || [],
     }
     
     originalOwnerIds.value = [...form.value.owners]
@@ -488,6 +502,7 @@ async function handleSubmit() {
         amount: form.value.financialImpact.hasImpact ? form.value.financialImpact.amount : undefined,
       },
       owners: form.value.owners,
+      subRisks: form.value.subRisks
     }
 
     // Business Logic: Handle Owner Changes (Simulated implementation for json-server)
@@ -497,11 +512,9 @@ async function handleSubmit() {
     let updatedRisk: any = { ...risk.value, ...payload }
 
     // Update Audit
-    // Note: We need a valid user ID for 'updatedBy'. For now, using 'RM001' or needing to fetch current user context.
-    const currentUser = 'RM001' // TODO: Get from auth store
     updatedRisk.audit = {
       ...updatedRisk.audit,
-      updatedBy: currentUser,
+      updatedBy: authStore.user?.userId || 'System',
       updatedAt: new Date(),
     }
 

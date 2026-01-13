@@ -1,5 +1,5 @@
 import api from '@/plugins/axios'
-import type { Risk, RiskStatus, RiskCategory, TimeHorizon, RiskOwner, Rating, AverageRating, AuditInfo, Mitigation, Question } from '@/types'
+import type { Risk, RiskStatus, RiskCategory, TimeHorizon, RiskOwner, Rating, AverageRating, AuditInfo, Mitigation, Question, SubRisk } from '@/types'
 
 export interface CreateRiskRequest {
   refNo: string
@@ -17,6 +17,7 @@ export interface CreateRiskRequest {
   ratings?: Rating[]
   mitigations?: Mitigation[]
   questions?: Question[]
+  subRisks?: SubRisk[]
   audit?: AuditInfo
 }
 
@@ -36,6 +37,7 @@ export interface UpdateRiskRequest {
   status?: RiskStatus
   mitigations?: Mitigation[]
   questions?: Question[]
+  subRisks?: SubRisk[]
 }
 
 export interface RiskFilters {

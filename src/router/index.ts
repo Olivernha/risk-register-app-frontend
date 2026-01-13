@@ -40,6 +40,29 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/risks/RiskDetailsView.vue'),
       },
       {
+        path: 'risks/:id/sub-risks/:subId',
+        name: 'SubRiskDetails',
+        component: () => import('@/views/risks/SubRiskDetailsView.vue'),
+      },
+      {
+        path: 'risks/:id/sub-risks/create',
+        name: 'SubRiskCreate',
+        component: () => import('@/views/risks/SubRiskCreateView.vue'),
+        meta: { requiresRole: ['RiskManagement', 'Admin'] },
+      },
+      {
+        path: 'risks/:id/sub-risks/manage',
+        name: 'SubRiskManage',
+        component: () => import('@/views/risks/SubRiskManageView.vue'),
+        meta: { requiresRole: ['RiskManagement', 'Admin'] },
+      },
+      {
+        path: 'risks/:id/sub-risks/:subId/edit',
+        name: 'SubRiskEdit',
+        component: () => import('@/views/risks/SubRiskEditView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         path: 'risks/:id/edit',
         name: 'RiskEdit',
         component: () => import('@/views/risks/RiskEditView.vue'),
@@ -71,7 +94,7 @@ const routes: RouteRecordRaw[] = [
         path: 'users',
         name: 'Users',
         component: () => import('@/views/users/UserListView.vue'),
-        meta: { requiresRole: ['Admin'] },
+        meta: { requiresRole: ['Admin', 'RiskManagement'] },
       },
     ],
   },

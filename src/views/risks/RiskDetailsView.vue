@@ -147,80 +147,119 @@
             </div>
           </div>
 
-          <!-- Mitigation Measures -->
+
+
+          <!-- Sub-risks & Mitigation Measures -->
           <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Mitigation Measures</h3>
-              <button
-                v-if="canAddMitigation"
-                @click="showCreateMitigationModal = true"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Add Mitigation
-              </button>
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">Sub-risks & Mitigation Measures</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Breakdown of specific sub-risks and their implementation status</p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  v-if="canEdit"
+                  @click="$router.push(`/risks/${risk.id}/sub-risks/create`)"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 border border-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Sub-risk
+                </button>
+                <button
+                  v-if="canEdit"
+                  @click="$router.push(`/risks/${risk.id}/sub-risks/manage`)"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  Manage Sub-risks
+                </button>
+              </div>
             </div>
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead class="bg-gray-50 dark:bg-slate-700/50">
+
+            <div v-if="risk.subRisks && risk.subRisks.length > 0" class="overflow-x-auto -mx-6">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50/50 dark:bg-slate-900/40 border-y border-gray-100 dark:border-gray-700">
                   <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Action Item</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Details</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Owner</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Target Date</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Ref</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Sub-risk / Action Item</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Mitigation Measures</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Owner / Target</th>
+                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                  <tr v-for="mitigation in risk.mitigations" :key="mitigation.controlId" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
-                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ mitigation.title }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                      <div class="max-w-xs truncate" :title="stripHtml(mitigation.details)">
-                        {{ stripHtml(mitigation.details) }}
-                      </div>
-                    </td>
-                    <td class="px-4 py-3">
-                      <span :class="[
-                        'inline-block px-2 py-1 text-xs font-medium rounded',
-                        getMitigationStatusClass(mitigation.status)
-                      ]">
-                        {{ mitigation.status }}
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                  <tr v-for="sub in risk.subRisks" :key="sub.subRiskId" class="group hover:bg-blue-50/30 dark:hover:bg-blue-900/5 transition-colors">
+                    <td class="px-6 py-4">
+                      <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-[10px] font-bold">
+                        {{ sub.refNo }}
                       </span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ mitigation.actionOwner.name }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ formatDate(mitigation.targetDate) }}</td>
-                    <td class="px-4 py-3 text-sm">
-                      <button
-                        v-if="canUpdateMitigation(mitigation)"
-                        @click="openUpdateMitigation(mitigation)"
-                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-xs"
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                  <tr v-if="risk.mitigations?.length === 0">
-                    <td colspan="6" class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
-                      <div class="flex flex-col items-center gap-2">
-                        <svg class="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p>No mitigation measures recorded.</p>
-                        <button
-                          v-if="canAddMitigation"
-                          @click="showCreateMitigationModal = true"
-                          class="mt-2 text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
-                        >
-                          Add your first mitigation
-                        </button>
+                    <td class="px-6 py-4">
+                      <div class="space-y-1">
+                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ sub.title }}</p>
+                        <p v-if="sub.actionItem" class="text-xs text-blue-600 dark:text-blue-400 italic">Item: {{ sub.actionItem }}</p>
                       </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <p class="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 max-w-xs" :title="sub.mitigationMeasures || sub.description">
+                        {{ sub.mitigationMeasures || sub.description }}
+                      </p>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span v-if="sub.status" :class="[
+                        'inline-block px-2 py-1 text-[10px] font-bold uppercase rounded',
+                        getMitigationStatusClass(sub.status)
+                      ]">
+                        {{ sub.status }}
+                      </span>
+                      <span v-else class="text-[10px] text-gray-400 italic">Not set</span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="space-y-1">
+                        <div v-if="sub.actionOwner" class="flex items-center gap-1.5">
+                          <div class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[8px] font-bold uppercase">
+                            {{ sub.actionOwner.name.substring(0, 2) }}
+                          </div>
+                          <span class="text-[10px] text-gray-700 dark:text-gray-300 font-medium">{{ sub.actionOwner.name }}</span>
+                        </div>
+                        <div v-if="sub.targetDate" class="flex items-center gap-1 text-[10px] text-gray-500">
+                          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          {{ formatDate(sub.targetDate) }}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <button
+                        @click="$router.push(`/risks/${risk.id}/sub-risks/${sub.subRiskId}`)"
+                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-bold flex items-center gap-1 justify-end ml-auto"
+                      >
+                        Details
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <div v-else class="text-center py-10 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-xl">
+              <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <p class="text-sm text-gray-500 font-medium">No sub-risks added to this risk.</p>
+                <button
+                  v-if="canEdit"
+                  @click="$router.push(`/risks/${risk.id}/sub-risks/create`)"
+                  class="mt-3 text-blue-600 hover:underline text-sm font-semibold"
+                >
+                  Add Sub-risk
+                </button>
             </div>
           </div>
 
@@ -311,23 +350,6 @@
     </template>
 
 
-
-    <CreateMitigationModal
-      :is-open="showCreateMitigationModal"
-      :risk-id="risk?.id || ''"
-      :risk-ref="risk?.refNo || ''"
-      @close="showCreateMitigationModal = false"
-      @created="handleMitigationCreated"
-    />
-
-    <UpdateMitigationModal
-      :is-open="showUpdateMitigationModal"
-      :risk-id="risk?.id || ''"
-      :mitigation="selectedMitigation"
-      @close="showUpdateMitigationModal = false"
-      @updated="handleMitigationUpdated"
-    />
-
     <Modal
       :is-open="showDiscussionModal"
       size="6xl"
@@ -343,7 +365,7 @@
           :risk-ref="risk.refNo"
           :version="risk.version"
           :is-locked="risk.status === 'Locked'"
-          @update-thread-id="(newId) => handleThreadIdUpdate(selectedRating!.ownerId, newId)"
+          @update-thread-id="(newId: string) => handleThreadIdUpdate(selectedRating!.ownerId, newId)"
         />
       </div>
     </Modal>
@@ -398,10 +420,9 @@ import { useRiskStore } from '@/stores/riskStore'
 import { useConfirmStore } from '@/stores/confirm'
 import BasisThread from '@/components/risks/BasisThread.vue'
 import QuestionsSection from '@/components/risks/QuestionsSection.vue'
-import CreateMitigationModal from '@/components/mitigations/CreateMitigationModal.vue'
-import UpdateMitigationModal from '@/components/mitigations/UpdateMitigationModal.vue'
 import Modal from '@/components/common/Modal.vue'
-import type { RiskLevel, MitigationStatus, Rating, Mitigation } from '@/types'
+import userService from '@/api/users'
+import type { Risk, RiskLevel, MitigationStatus, Rating, User, RiskOwner } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -409,17 +430,15 @@ const authStore = useAuthStore()
 const riskStore = useRiskStore()
 const confirmStore = useConfirmStore()
 
-const showCreateMitigationModal = ref(false)
-const showUpdateMitigationModal = ref(false)
 const showDiscussionModal = ref(false)
 const showDeleteModal = ref(false)
 const deleteReason = ref('')
 const selectedRating = ref<Rating | null>(null)
-const selectedMitigation = ref<Mitigation | null>(null)
+const users = ref<User[]>([])
 
 const selectedRatingOwner = computed(() => {
     if (!risk.value || !selectedRating.value) return null
-    return risk.value.owners.find((o: any) => o.userId === selectedRating.value!.ownerId) || null
+    return risk.value.owners.find((o: RiskOwner) => o.userId === selectedRating.value!.ownerId) || null
 })
 
 function openDiscussion(rating: Rating) {
@@ -427,33 +446,31 @@ function openDiscussion(rating: Rating) {
     showDiscussionModal.value = true
 }
 
-function openUpdateMitigation(mitigation: Mitigation) {
-  selectedMitigation.value = mitigation
-  showUpdateMitigationModal.value = true
-}
+const riskId = computed(() => route.params.id as string)
 
-function canUpdateMitigation(mitigation: Mitigation) {
-  if (!risk.value || !authStore.user) return false
-  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
-  const isActionOwner = mitigation.actionOwner.userId === authStore.user.userId
-  return isRM || isActionOwner
-}
-
-const risk = computed(() => {
-  const id = route.params.id as string
-
-  return riskStore.getRiskById(id)
-})
+const risk = computed<Risk | undefined>(() => riskStore.getRiskById(riskId.value))
 
 const userHasRated = computed(() => {
   if (!risk.value || !authStore.user) return false
-  return risk.value.ratings.some(r => r.ownerId === authStore.user?.userId)
+  return risk.value.ratings.some((r: Rating) => r.ownerId === authStore.user?.userId)
 })
 
-onMounted(() => {
+onMounted(async () => {
   const id = route.params.id as string
-  riskStore.fetchRiskById(id)
+  await Promise.all([
+    riskStore.fetchRiskById(id),
+    fetchUsers()
+  ])
 })
+
+async function fetchUsers() {
+  try {
+    const data = await userService.getUsers()
+    users.value = data
+  } catch (e) {
+    console.error('Failed to fetch users', e)
+  }
+}
 
 watch(risk, (newRisk) => {
   if (newRisk && newRisk.status === 'Draft') {
@@ -481,10 +498,8 @@ const canDelete = computed(() => {
   if (!risk.value) return false
   const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
   const isDraft = risk.value.status === 'Draft'
-  // Check for actual submitted ratings (non-zero)
-  const hasNoActualRatings = !risk.value.ratings || risk.value.ratings.every(r => r.currentLikelihood === 0 && r.currentImpact === 0)
-  const hasNoMitigations = !risk.value.mitigations || risk.value.mitigations.length === 0
-  return isRM && isDraft && hasNoActualRatings && hasNoMitigations
+  const hasNoActualRatings = !risk.value.ratings || risk.value.ratings.every((r: Rating) => r.currentLikelihood === 0 && r.currentImpact === 0)
+  return isRM && isDraft && hasNoActualRatings
 })
 
 const canRate = computed(() => {
@@ -501,12 +516,6 @@ const canLock = computed(() => {
   return isRM && isPublished
 })
 
-const canAddMitigation = computed(() => {
-  if (!risk.value) return false
-  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
-  const isNotDraft = risk.value.status !== 'Draft'
-  return isRM && isNotDraft
-})
 
 async function handlePublish() {
   if (!risk.value) return
@@ -585,16 +594,6 @@ async function handleLock() {
   }
 }
 
-async function handleMitigationCreated() {
-  // Refresh risk data
-  const id = route.params.id as string
-  await riskStore.fetchRiskById(id)
-}
-
-async function handleMitigationUpdated() {
-  const id = route.params.id as string
-  await riskStore.fetchRiskById(id)
-}
 
 function getRiskLevelClass(level?: RiskLevel) {
   switch (level) {
@@ -627,12 +626,6 @@ function getStatusClass(status: string) {
 function formatDate(date: string | Date | undefined) {
   if (!date) return 'N/A'
   return new Date(date).toLocaleDateString()
-}
-
-function stripHtml(html: string): string {
-  const tmp = document.createElement('div')
-  tmp.innerHTML = html
-  return tmp.textContent || tmp.innerText || ''
 }
 
 async function handleThreadIdUpdate(ownerId: string, newThreadId: string) {
