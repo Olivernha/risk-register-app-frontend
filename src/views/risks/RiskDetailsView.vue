@@ -106,18 +106,7 @@
             </div>
           </div>
 
-          <!-- Risk Owners -->
-          <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">Risk Owners</h3>
-            <ul class="space-y-2">
-              <li v-for="owner in risk.owners" :key="owner.userId" class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-white text-xs font-medium">
-                  {{ owner.name?.substring(0, 2).toUpperCase() }}
-                </div>
-                <span class="text-sm text-gray-900 dark:text-gray-100">{{ owner.name }}</span>
-              </li>
-            </ul>
-          </div>
+
 
           <!-- Rating Basis Threads -->
           <div v-if="risk.status !== 'Draft' && risk.ratings && risk.ratings.length > 0" class="space-y-4">
@@ -182,6 +171,7 @@
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Owner</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Target Date</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -202,9 +192,18 @@
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ mitigation.actionOwner.name }}</td>
                     <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{{ formatDate(mitigation.targetDate) }}</td>
+                    <td class="px-4 py-3 text-sm">
+                      <button
+                        v-if="canUpdateMitigation(mitigation)"
+                        @click="openUpdateMitigation(mitigation)"
+                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-xs"
+                      >
+                        Edit
+                      </button>
+                    </td>
                   </tr>
                   <tr v-if="risk.mitigations?.length === 0">
-                    <td colspan="5" class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
+                    <td colspan="6" class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400 text-center">
                       <div class="flex flex-col items-center gap-2">
                         <svg class="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -224,10 +223,26 @@
               </table>
             </div>
           </div>
+
+          <!-- Ad-hoc Questions -->
+          <QuestionsSection :risk="risk" />
         </div>
 
         <!-- Right Column - Sidebar -->
         <div class="space-y-6">
+          <!-- Risk Owners -->
+          <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">Risk Owners</h3>
+            <ul class="space-y-2">
+              <li v-for="owner in risk.owners" :key="owner.userId" class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-white text-xs font-medium">
+                  {{ owner.name?.substring(0, 2).toUpperCase() }}
+                </div>
+                <span class="text-sm text-gray-900 dark:text-gray-100">{{ owner.name }}</span>
+              </li>
+            </ul>
+          </div>
+
           <!-- Likelihood x Impact -->
           <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">Likelihood x Impact</h3>
@@ -295,12 +310,22 @@
       </div>
     </template>
 
+
+
     <CreateMitigationModal
       :is-open="showCreateMitigationModal"
       :risk-id="risk?.id || ''"
       :risk-ref="risk?.refNo || ''"
       @close="showCreateMitigationModal = false"
       @created="handleMitigationCreated"
+    />
+
+    <UpdateMitigationModal
+      :is-open="showUpdateMitigationModal"
+      :risk-id="risk?.id || ''"
+      :mitigation="selectedMitigation"
+      @close="showUpdateMitigationModal = false"
+      @updated="handleMitigationUpdated"
     />
 
     <Modal
@@ -372,9 +397,11 @@ import { useAuthStore } from '@/stores/auth'
 import { useRiskStore } from '@/stores/riskStore'
 import { useConfirmStore } from '@/stores/confirm'
 import BasisThread from '@/components/risks/BasisThread.vue'
+import QuestionsSection from '@/components/risks/QuestionsSection.vue'
 import CreateMitigationModal from '@/components/mitigations/CreateMitigationModal.vue'
+import UpdateMitigationModal from '@/components/mitigations/UpdateMitigationModal.vue'
 import Modal from '@/components/common/Modal.vue'
-import type { RiskLevel, MitigationStatus, Rating } from '@/types'
+import type { RiskLevel, MitigationStatus, Rating, Mitigation } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -383,10 +410,12 @@ const riskStore = useRiskStore()
 const confirmStore = useConfirmStore()
 
 const showCreateMitigationModal = ref(false)
+const showUpdateMitigationModal = ref(false)
 const showDiscussionModal = ref(false)
 const showDeleteModal = ref(false)
 const deleteReason = ref('')
 const selectedRating = ref<Rating | null>(null)
+const selectedMitigation = ref<Mitigation | null>(null)
 
 const selectedRatingOwner = computed(() => {
     if (!risk.value || !selectedRating.value) return null
@@ -396,6 +425,18 @@ const selectedRatingOwner = computed(() => {
 function openDiscussion(rating: Rating) {
     selectedRating.value = rating
     showDiscussionModal.value = true
+}
+
+function openUpdateMitigation(mitigation: Mitigation) {
+  selectedMitigation.value = mitigation
+  showUpdateMitigationModal.value = true
+}
+
+function canUpdateMitigation(mitigation: Mitigation) {
+  if (!risk.value || !authStore.user) return false
+  const isRM = authStore.hasRole(['RiskManagement', 'Admin'])
+  const isActionOwner = mitigation.actionOwner.userId === authStore.user.userId
+  return isRM || isActionOwner
 }
 
 const risk = computed(() => {
@@ -546,6 +587,11 @@ async function handleLock() {
 
 async function handleMitigationCreated() {
   // Refresh risk data
+  const id = route.params.id as string
+  await riskStore.fetchRiskById(id)
+}
+
+async function handleMitigationUpdated() {
   const id = route.params.id as string
   await riskStore.fetchRiskById(id)
 }

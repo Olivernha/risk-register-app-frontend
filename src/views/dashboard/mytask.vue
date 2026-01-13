@@ -243,7 +243,8 @@ const pendingRatings = computed(() => {
     if (!currentUserId.value) return []
     return risks.value.filter((risk: Risk) => {
         const isOwner = risk.owners.some((o: RiskOwner) => o.userId === currentUserId.value)
-        if (!isOwner || risk.status === 'Locked') return false
+        // Only show pending ratings for Published risks (Exclude Draft and Locked)
+        if (!isOwner || risk.status !== 'Published') return false
         
         const myRating = risk.ratings.find((r: Rating) => r.ownerId === currentUserId.value)
         // Considered pending if no rating object exists OR likelihood/impact are 0
@@ -258,7 +259,9 @@ const myQuestions = computed(() => {
     if (!currentUserId.value) return []
     const list: { riskId: string, riskRef: string, question: Question }[] = []
     
-risks.value.forEach((risk: Risk) => {
+    risks.value.forEach((risk: Risk) => {
+        // Only show questions for Published or Locked risks
+        if (risk.status === 'Draft') return
         const assignedQs = (risk.questions || []).filter((q: Question) => q.assignedTo.userId === currentUserId.value && q.status === 'Open')
         assignedQs.forEach((q: Question) => {
             list.push({ riskId: risk.id, riskRef: risk.refNo, question: q })
@@ -272,7 +275,9 @@ const myMitigations = computed(() => {
     if (!currentUserId.value) return []
     const list: { riskId: string, riskRef: string, mitigation: Mitigation }[] = []
 
-risks.value.forEach((risk: Risk) => {
+    risks.value.forEach((risk: Risk) => {
+        // Only show mitigations for Published or Locked risks
+        if (risk.status === 'Draft') return
         // Show ALL assigned mitigations, including completed ones
         const assignedMs = (risk.mitigations || []).filter((m: Mitigation) => m.actionOwner.userId === currentUserId.value)
         assignedMs.forEach((m: Mitigation) => {
@@ -291,7 +296,8 @@ const draftRisks = computed(() => {
 const myAssignedRisks = computed(() => {
     if (!currentUserId.value) return []
     return risks.value.filter((risk: Risk) => {
-        return risk.owners.some((o: RiskOwner) => o.userId === currentUserId.value)
+        const isOwner = risk.owners.some((o: RiskOwner) => o.userId === currentUserId.value)
+        return isOwner && risk.status !== 'Draft'
     })
 })
 

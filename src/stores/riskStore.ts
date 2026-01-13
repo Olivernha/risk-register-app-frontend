@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Risk } from '@/types'
+import type { Risk, Question, QuestionStatus } from '@/types'
 import riskService from '@/api/risks'
 
 export const useRiskStore = defineStore('risk', () => {
@@ -303,6 +303,102 @@ export const useRiskStore = defineStore('risk', () => {
     publishRisk,
     lockRisk,
     updateRiskRating,
-    deleteRisk
+    deleteRisk,
+
+    async addQuestion(riskId: string, data: { text: string; assignedToId: string; priority: string; dueDate?: string }) {
+      loading.value = true
+      error.value = null
+      try {
+        const risk = risks.value.find(r => r.id === riskId) || await riskService.getRisk(riskId)
+        if (!risk) throw new Error('Risk not found')
+
+        // Create a new thread for the question
+        // We import threadService inside action to avoid circular dependency if any, or just at top
+        const { default: threadService } = await import('@/api/threads')
+        
+        // Find owner name for payload
+        const owner = risk.owners.find(o => o.userId === data.assignedToId)
+        if (!owner) throw new Error('Owner not found')
+
+        const questionId = crypto.randomUUID()
+        
+        // Actually threadService.createThread might be better
+        const thread = await threadService.createThread({
+           entityType: 'question_reply',
+           entityId: questionId,
+           riskRef: risk.refNo,
+           version: risk.version
+        })
+
+        const newQuestion: Question = {
+           questionId: questionId,
+           text: data.text,
+           assignedTo: {
+             userId: owner.userId,
+             name: owner.name
+           },
+           status: 'Open' as QuestionStatus,
+           priority: data.priority as any,
+           dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+           threadId: thread.id,
+           createdAt: new Date(),
+           createdBy: 'Current User' // Should get from authStore
+        }
+
+        const currentQuestions = risk.questions || []
+        const updatedQuestions = [...currentQuestions, newQuestion]
+
+        // Update Risk
+        const updatedRisk = await riskService.updateRisk(riskId, { questions: updatedQuestions })
+
+        // Update local state
+        const index = risks.value.findIndex(r => r.id === riskId)
+        if (index !== -1) risks.value[index] = updatedRisk
+        currentRisk.value = updatedRisk
+        
+        return updatedRisk
+      } catch (e: any) {
+        error.value = e.message
+        throw e
+      } finally {
+        loading.value = false
+      }
+    },
+
+    async closeQuestion(riskId: string, questionId: string) {
+       loading.value = true
+       try {
+         const risk = risks.value.find(r => r.id === riskId) || await riskService.getRisk(riskId)
+         if (!risk) throw new Error('Risk not found')
+         
+         const questions = risk.questions || []
+         const qIndex = questions.findIndex((q: any) => q.questionId === questionId)
+         
+         if (qIndex === -1) throw new Error('Question not found')
+         
+         const updatedQuestion = {
+           ...questions[qIndex],
+           status: 'Closed' as QuestionStatus,
+           closedAt: new Date(),
+           closedBy: 'Current User'
+         }
+         
+         const updatedQuestions = [...questions]
+         updatedQuestions[qIndex] = updatedQuestion
+         
+         const updatedRisk = await riskService.updateRisk(riskId, { questions: updatedQuestions })
+         
+         const index = risks.value.findIndex(r => r.id === riskId)
+         if (index !== -1) risks.value[index] = updatedRisk
+         currentRisk.value = updatedRisk
+
+         return updatedRisk
+       } catch (e: any) {
+         error.value = e.message
+         throw e
+       } finally { 
+         loading.value = false
+       }
+    }
   }
 })
