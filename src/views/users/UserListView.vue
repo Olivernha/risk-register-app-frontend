@@ -160,8 +160,12 @@
             type="email"
             required
             class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-            placeholder="email@example.com"
+            :class="{ 'border-rose-500 focus:ring-rose-500': formData.email && !formData.email.toLowerCase().endsWith('@tuaspower.com.sg') }"
+            placeholder="username@tuaspower.com.sg"
           />
+          <p v-if="formData.email && !formData.email.toLowerCase().endsWith('@tuaspower.com.sg')" class="mt-1 text-xs text-rose-500">
+            Email must be a valid @tuaspower.com.sg address
+          </p>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
@@ -316,15 +320,22 @@ const openEditModal = (user: User) => {
 }
 
 const saveUser = async () => {
+  if (!formData.email.toLowerCase().endsWith('@tuaspower.com.sg')) {
+    alert('Please enter a valid @tuaspower.com.sg email address.')
+    return
+  }
+
   saving.value = true
   try {
     if (isEditing.value && selectedUser.value) {
       await userService.updateUser(selectedUser.value.userId, formData)
     } else {
-      // Mock generate userId for json-server if not provided
+      // json-server requires an 'id' field for internal routing and auto-generation
+      const newUserId = `U${Date.now()}`
       const newUserData = {
         ...formData,
-        userId: `U${Date.now()}`
+        userId: newUserId,
+        id: newUserId
       }
       await userService.createUser(newUserData as any)
     }

@@ -1,6 +1,7 @@
 {
   "users": [
     {
+      "id": "RM001",
       "userId": "RM001",
       "name": "Risk Manager",
       "email": "rm@company.com",
@@ -12,6 +13,7 @@
       "active": true
     },
     {
+      "id": "U001",
       "userId": "U001",
       "name": "Michael Wong",
       "email": "michael.wong@company.com",
@@ -21,6 +23,7 @@
       "active": true
     },
     {
+      "id": "nayha@tuaspower.com.sg",
       "userId": "nayha@tuaspower.com.sg",
       "name": "Oliver Nayha",
       "email": "nayha@tuaspower.com.sg",
@@ -30,6 +33,7 @@
       "active": true
     },
     {
+      "id": "U005",
       "userId": "U005",
       "name": "Sarah Chen",
       "email": "sarah.chen@company.com",
@@ -39,6 +43,7 @@
       "active": true
     },
     {
+      "id": "U006",
       "userId": "U006",
       "name": "David Lee",
       "email": "david.lee@company.com",
@@ -46,6 +51,26 @@
       "department": "Engineering",
       "permissions": [],
       "active": true
+    },
+    {
+      "name": "Johnson",
+      "email": "johnson@tuaspower.com.sg",
+      "role": "RiskOwner",
+      "department": "Finance",
+      "active": true,
+      "userId": "U1768355873011",
+      "id": "U1768355873011",
+      "permissions": []
+    },
+    {
+      "name": "David",
+      "email": "david@tuaspower.com.sg",
+      "role": "RiskOwner",
+      "department": "Finance",
+      "active": true,
+      "userId": "U1768961002456",
+      "id": "U1768961002456",
+      "permissions": []
     }
   ],
   "versions": [
@@ -314,11 +339,19 @@
       "ratings": [
         {
           "ownerId": "nayha@tuaspower.com.sg",
-          "currentLikelihood": 0,
-          "currentImpact": 0,
+          "currentLikelihood": 1,
+          "currentImpact": 2,
           "basisThreadId": 5,
-          "updatedAt": "2025-12-30T03:24:42.876Z",
-          "history": []
+          "submittedAt": "2026-01-21T02:34:16.057Z",
+          "updatedAt": "2026-01-21T02:34:16.057Z",
+          "history": [
+            {
+              "likelihood": 0,
+              "impact": 0,
+              "changedAt": "2026-01-21T02:34:16.057Z",
+              "reason": "hello world"
+            }
+          ]
         },
         {
           "ownerId": "U006",
@@ -349,8 +382,8 @@
       "audit": {
         "createdBy": "RM001",
         "createdAt": "2025-12-30T03:24:42.876Z",
-        "updatedBy": "Current User",
-        "updatedAt": "2026-01-13T04:47:57.442Z"
+        "updatedBy": "Oliver Nayha",
+        "updatedAt": "2026-01-21T02:34:16.057Z"
       },
       "id": "4y8rusl",
       "subRisks": [
@@ -365,12 +398,18 @@
             "userId": "U005",
             "name": "Sarah Chen"
           },
-          "status": "Not Started",
+          "status": "Ongoing",
           "targetDate": "2026-01-22T00:00:00.000Z",
           "progressPercentage": 0,
           "progressComments": ""
         }
-      ]
+      ],
+      "averageRating": {
+        "likelihood": 1,
+        "impact": 2,
+        "riskLevel": "Low",
+        "color": "#22c55e"
+      }
     },
     {
       "refNo": "R6",
@@ -778,18 +817,6 @@
       "version": "2025 Q4",
       "comments": [
         {
-          "commentId": "comment-1767065176304",
-          "userId": "RM001",
-          "userName": "Risk Manager",
-          "userRole": "RiskManagement",
-          "message": "<p>@Risk Manager Nice to meet you</p>",
-          "timestamp": "2025-12-30T03:26:16.304Z",
-          "edited": false,
-          "mentions": [
-            "RM001"
-          ]
-        },
-        {
           "commentId": "comment-1767592276009",
           "userId": "U006",
           "userName": "David Lee",
@@ -800,16 +827,6 @@
           "mentions": [
             "RM001"
           ]
-        },
-        {
-          "commentId": "comment-1767592298489",
-          "userId": "RM001",
-          "userName": "Risk Manager",
-          "userRole": "RiskManagement",
-          "message": "<p>nice to meet you</p>",
-          "timestamp": "2026-01-05T05:51:38.489Z",
-          "edited": false,
-          "mentions": []
         },
         {
           "commentId": "comment-1767592742308",
@@ -830,10 +847,20 @@
           "timestamp": "2026-01-05T06:00:51.425Z",
           "edited": false,
           "mentions": []
+        },
+        {
+          "commentId": "comment-1768962855972",
+          "userId": "nayha@tuaspower.com.sg",
+          "userName": "Oliver Nayha",
+          "userRole": "User",
+          "message": "[Rating Update] hello world",
+          "timestamp": "2026-01-21T02:34:15.972Z",
+          "edited": false,
+          "mentions": []
         }
       ],
       "createdAt": "2025-12-30T03:26:16.231Z",
-      "lastCommentAt": "2026-01-05T06:00:51.425Z",
+      "lastCommentAt": "2026-01-21T02:34:15.972Z",
       "id": 5
     },
     {

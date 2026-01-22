@@ -181,33 +181,38 @@
               <table class="w-full text-left border-collapse">
                 <thead class="bg-gray-50/50 dark:bg-slate-900/40 border-y border-gray-100 dark:border-gray-700">
                   <tr>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Ref</th>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Sub-risk / Action Item</th>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Mitigation Measures</th>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Owner / Target</th>
-                    <th class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Ref</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Sub-risk / Action Item</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Mitigation Measures</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">Owner / Target</th>
+                    <th class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                  <tr v-for="sub in risk.subRisks" :key="sub.subRiskId" class="group hover:bg-blue-50/30 dark:hover:bg-blue-900/5 transition-colors">
-                    <td class="px-6 py-4">
+                  <tr 
+                    v-for="sub in risk.subRisks" 
+                    :key="sub.subRiskId" 
+                    @click="$router.push(`/risks/${risk.id}/sub-risks/${sub.subRiskId}`)"
+                    class="group hover:bg-blue-50/30 dark:hover:bg-blue-900/5 transition-colors cursor-pointer"
+                  >
+                    <td class="px-4 py-4">
                       <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-[10px] font-bold">
                         {{ sub.refNo }}
                       </span>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-4">
                       <div class="space-y-1">
                         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ sub.title }}</p>
                         <p v-if="sub.actionItem" class="text-xs text-blue-600 dark:text-blue-400 italic">Item: {{ sub.actionItem }}</p>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-4">
                       <p class="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 max-w-xs" :title="sub.mitigationMeasures || sub.description">
                         {{ sub.mitigationMeasures || sub.description }}
                       </p>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-4">
                       <span v-if="sub.status" :class="[
                         'inline-block px-2 py-1 text-[10px] font-bold uppercase rounded',
                         getMitigationStatusClass(sub.status)
@@ -216,7 +221,7 @@
                       </span>
                       <span v-else class="text-[10px] text-gray-400 italic">Not set</span>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 py-4">
                       <div class="space-y-1">
                         <div v-if="sub.actionOwner" class="flex items-center gap-1.5">
                           <div class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[8px] font-bold uppercase">
@@ -232,9 +237,8 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-4 py-4 text-right">
                       <button
-                        @click="$router.push(`/risks/${risk.id}/sub-risks/${sub.subRiskId}`)"
                         class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-bold flex items-center gap-1 justify-end ml-auto"
                       >
                         Details

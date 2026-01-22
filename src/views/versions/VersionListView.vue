@@ -243,7 +243,6 @@ async function handleCreateVersion() {
   }
 
   // Validation: Check for active version
-  // Validation: Check for active version
   if (activeVersion) {
     const confirmed = await confirmStore.ask({
         title: 'Create New Version',
@@ -319,7 +318,7 @@ async function copyRisksFromVersion(sourceVersionId: string, targetVersionId: st
         }
       }
 
-      await riskService.createRisk(newRisk)
+      await riskService.createRisk(newRisk as any)
     }
 
     console.log(`Copied ${risksToCopy.length} risks to new version`)

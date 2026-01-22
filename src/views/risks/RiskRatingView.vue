@@ -365,6 +365,8 @@ const fallbackMatrix: Record<string, { level: RiskLevel, color: string }> = {
   '5-1': { level: 'Medium', color: '#eab308' }, '5-2': { level: 'High', color: '#f97316' }, '5-3': { level: 'High', color: '#f97316' }, '5-4': { level: 'Very High', color: '#ef4444' }, '5-5': { level: 'Very High', color: '#ef4444' }
 }
 
+import heatmapService from '@/api/heatmap'
+
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -416,8 +418,7 @@ onMounted(async () => {
 
 async function fetchHeatmap() {
     try {
-        const response = await fetch('http://localhost:3001/heatmap')
-        heatmap.value = await response.json()
+        heatmap.value = await heatmapService.getHeatmapLookup()
     } catch (e) {
         console.error('Failed to load heatmap lookup', e)
     }
